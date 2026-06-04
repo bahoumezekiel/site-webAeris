@@ -8,7 +8,7 @@ import type { Service } from "../data/services";
 import React from "react";
 
 // ── Icônes SVG par service ───────────────────────────────────
-const serviceIcons: Record<number, React.JSX.Element> = {
+const serviceIcons: Record<number, React.JSX.Element> = { 
   1: ( // Robotique
     <svg viewBox="0 0 48 48" fill="none" className="w-full h-full" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
       <rect x="14" y="20" width="20" height="18" rx="3" />
@@ -31,7 +31,7 @@ const serviceIcons: Record<number, React.JSX.Element> = {
       <path d="M6 20v8M42 20v8" />
     </svg>
   ),
-  3: ( // Automatique
+  3: ( // Automatisme
     <svg viewBox="0 0 48 48" fill="none" className="w-full h-full" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
       <circle cx="24" cy="24" r="8" />
       <circle cx="24" cy="24" r="3" fill="currentColor" stroke="none" opacity={0.5} />
@@ -84,16 +84,19 @@ const serviceAccents: Record<number, { from: string; to: string; glow: string; b
   6: { from: "#166534",  to: "#15803d",  glow: "rgba(22,101,52,0.35)",  border: "rgba(21,128,61,0.4)" },
 };
 
+// cette interface est utilisée pour typer les props du composant ServiceCard, qui représente une carte de service avec un effet de flip 3D. Elle contient un objet "service" de type Service (défini dans data/services.ts) et un index pour gérer l'animation d'apparition décalée.
 interface ServiceCardProps {
   service: Service;
   index: number;
 }
 
+// cette fonction est le composant React qui affiche une carte de service avec un effet de flip 3D. Elle utilise les données du service pour afficher l'icône, le titre, la description et les tags associés. Le composant gère également l'état de "flipped" pour savoir si la carte est retournée ou non, et applique des styles CSS pour les animations et les effets visuels.
 export default function ServiceCard({ service, index }: ServiceCardProps) {
   const [flipped, setFlipped] = useState(false);
-  const accent = serviceAccents[service.id] ?? serviceAccents[1];
+  const accent = serviceAccents[service.id] ?? serviceAccents[1]; // si le service na pas de couleur defini prend pour le premier
   const icon = serviceIcons[service.id];
 
+  // Animation d'apparition de la carte
   return (
     <div
       className="group cursor-pointer"
@@ -109,7 +112,7 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
       <div
         style={{
           position: "relative",
-          height: "320px",
+          height: "350px",
           transformStyle: "preserve-3d",
           transition: "transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1)",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -120,7 +123,7 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
           style={{
             position: "absolute",
             inset: 0,
-            backfaceVisibility: "hidden",
+            backfaceVisibility: "hidden", // cache la partie arrière de la carte quand la carte est retourner
             WebkitBackfaceVisibility: "hidden",
             borderRadius: "20px",
             overflow: "hidden",
@@ -130,17 +133,10 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
             transition: "box-shadow 0.3s ease, transform 0.3s ease",
           }}
           className="card-front"
-        >
-          {/* Bande de couleur supérieure */}
-          <div
-            style={{
-              height: "6px",
-              background: `linear-gradient(90deg, ${accent.from}, ${accent.to})`,
-            }}
-          />
+        > 
 
           {/* Contenu face avant */}
-          <div className="p-8 flex flex-col h-full">
+          <div className="p-8 flex flex-col h-full items-center text-center">
             {/* Icône dans un cercle */}
             <div
               style={{
@@ -158,32 +154,14 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
               className="icon-box"
             >
               {icon}
-            </div>
-
-            {/* Numéro flottant */}
-            <div
-              style={{
-                position: "absolute",
-                top: "18px",
-                right: "22px",
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 800,
-                fontSize: "3.5rem",
-                lineHeight: 1,
-                color: `${accent.from}10`,
-                userSelect: "none",
-                letterSpacing: "-0.04em",
-              }}
-            >
-              0{service.id}
-            </div>
-
+            </div> 
+            
             {/* Titre */}
             <h3
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: "1.25rem",
+                fontWeight: 900,
+                fontSize: "1.75rem",
                 color: "#143C62",
                 marginBottom: "10px",
                 lineHeight: 1.2,
@@ -197,10 +175,10 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
               style={{
                 fontSize: "0.875rem",
                 color: "#6b7280",
-                lineHeight: 1.65,
-                display: "-webkit-box",
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: "vertical",
+                lineHeight: 1.65, // hauteur du texte pour gérer le nombre de lignes
+                display: "-webkit-box",// affichage multi-lignes
+                WebkitLineClamp: 3,// coupe le text apres trois ligne
+                WebkitBoxOrient: "vertical", // le text doit s'organiser verticalement
                 overflow: "hidden",
                 flex: 1,
               }}
@@ -225,7 +203,7 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
                 <path d="M4 10a6 6 0 1 0 6-6" strokeLinecap="round" />
                 <path d="M7 4H4V7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Retourner pour plus
+              clique sur la carte pour en savoir plus
             </div>
           </div>
 

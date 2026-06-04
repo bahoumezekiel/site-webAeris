@@ -13,7 +13,7 @@ import { services } from "../data/services";
 const heroSlides = [
   { src: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80", label: "Systèmes embarqués" },
   { src: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1920&q=80", label: "Robotique" },
-  { src: "https://images.unsplash.com/photo-1581091877018-dac6a371d50f?w=1920&q=80", label: "Automatique" },
+  { src: "https://images.unsplash.com/photo-1581091877018-dac6a371d50f?w=1920&q=80", label: "Automatisme" },
   { src: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1920&q=80", label: "Impression 3D" },
   { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80", label: "Domotique" },
 ];
@@ -22,7 +22,7 @@ const heroSlides = [
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80", label: "Robotique industrielle", category: "Robotique" },
   { src: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80", label: "Systèmes embarqués", category: "Embarqué" },
-  { src: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80", label: "Automatisation", category: "Automatique" },
+  { src: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80", label: "Automatisation", category: "Automatisme" },
   { src: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=800&q=80", label: "Impression 3D", category: "3D" },
   { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80", label: "Domotique connectée", category: "Domotique" },
   { src: "https://images.unsplash.com/photo-1581082174218-59b33e8e0d28?w=800&q=80", label: "Prototypage", category: "Prototypage" },
@@ -36,7 +36,7 @@ function GallerySection() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeFilter, setActiveFilter] = useState("Tous"); // stocke quel categorie est sélectionnée pour le filtrage
 
-  const filters = ["Tous", "Robotique", "Embarqué", "Automatique", "3D", "Domotique", "Prototypage"];
+  const filters = ["Tous", "Robotique", "Embarqué", "Automatisme", "3D", "Domotique", "Prototypage"];
   const filtered =
     activeFilter === "Tous"
       ? galleryImages
@@ -269,7 +269,7 @@ export default function AccueilPage() {
         </div>
 
         {/* Contenu hero */}
-        <div className="relative max-w-7xl mx-auto px-6 pt-20 w-full flex flex-col items-center" style={{ zIndex: 5 }}>
+        <div className="relative max-w-10xl mx-auto px-8 pt-25 w-full flex flex-col items-center" style={{ zIndex: 5 }}>
           <div className="max-w-5xxl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-400/30 text-orange-300 text-sm font-medium px-4 py-1.5 rounded-full mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
@@ -277,7 +277,7 @@ export default function AccueilPage() {
             </div>
             <h1
               className="text-white leading-tight mb-6"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2.6rem, 6vw, 4.5rem)", letterSpacing: "-0.02em" }}
+              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 8vw, 6rem)", letterSpacing: "-0.02em" }}
             >
               L'innovation technique au
               <br />
@@ -288,7 +288,7 @@ export default function AccueilPage() {
               Aeris Consulting vous accompagne dans la conception de solutions robotiques,
               embarquées et automatisées. De l'idée au prototype fonctionnel.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4 mb-20">
               <Link to="/services" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/30 hover:-translate-y-0.5">
                 Découvrir nos services
               </Link>
@@ -395,7 +395,7 @@ export default function AccueilPage() {
               style={{ opacity: aboutInView ? 1 : 0, transform: aboutInView ? "translateX(0)" : "translateX(-40px)", transition: "opacity 0.8s ease, transform 0.8s ease" }}
             >
               <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">À propos</span>
-              <h2 className="text-4xl md:text-5xl text-[#143C62] mt-3 mb-6 leading-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}>
+              <h2 className="text-4xl md:text-5xl text-[#143C62] mt-3 mb-6 leading-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 ,}}>
                 Des ingénieurs passionnés par l'innovation
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-5">

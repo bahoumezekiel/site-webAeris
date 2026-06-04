@@ -29,7 +29,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-gray-500 text-sm leading-relaxed">
-              Votre partenaire en robotique, systèmes embarqués, automatique et prototypage 3D.
+              Votre partenaire en robotique, systèmes embarqués, automatisme et prototypage 3D.
             </p>
           </div>
 
@@ -80,7 +80,7 @@ export default function Footer() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4 text-orange-500 flex-shrink-0">
                   <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                +33 1 23 45 67 89
+                +226 67 42 83 16
               </li>
             </ul>
           </div>

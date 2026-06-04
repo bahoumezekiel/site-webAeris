@@ -28,7 +28,7 @@ export const services: Service[] = [
   },
   {
     id: 3,
-    title: "Automatique",
+    title: "Automatisme",
     image: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=600&q=80",
     description:
       "Conception d'automatismes industriels, supervision SCADA, régulation PID et contrôle-commande de processus. Nous optimisons vos lignes de production par l'automatisation intelligente.",

@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import AccueilPage from "./pages/AccueilPage";
 import ServicesPage from "./pages/ServicesPage";
 import AProposPage from "./pages/AProposPage";
+import ContactPage from "./pages/ContactPage";
 
 // Pages à venir (décommenter au fur et à mesure)
 // import ServicesPage from "./pages/ServicesPage";
@@ -27,7 +28,7 @@ export default function App() {
         <Route path="/" element={<AccueilPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/a-propos" element={<AProposPage />} />
-
+        <Route path="/contact" element={<ContactPage />} />
         {/* Routes à activer progressivement */}
         {/* <Route path="/services" element={<ServicesPage />} /> */}
         {/* <Route path="/a-propos" element={<AProposPage />} /> */}
