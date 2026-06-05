@@ -277,7 +277,7 @@ export default function AccueilPage() {
             </div>
             <h1
               className="text-white leading-tight mb-6"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 8vw, 6rem)", letterSpacing: "-0.02em" }}
+              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 8vw, 6rem)", letterSpacing: "-0.02em" , lineHeight: "0.90" }}
             >
               L'innovation technique au
               <br />

@@ -22,7 +22,7 @@ export const services: Service[] = [
   {
     id: 2,
     title: "Systèmes embarqués",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80",
+    image: "src/assets/systeme.png",
     description:
       "Développement de firmware temps réel, architectures ARM/FPGA et chaînes de compilation croisée. Nous maîtrisons l'ensemble de la chaîne du bas niveau au système d'exploitation embarqué.",
   },

@@ -11,9 +11,9 @@
 // ============================================================
 
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import { useInView } from "../hooks/useInView";
+import contactBg from "../assets/ingenieur.png";
 
 // ============================================================
 // REMPLACER CES 3 VALEURS PAR VOS CLÉS EMAILJS
@@ -149,46 +149,62 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
 
-      {/* HERO */}
-      <section className="relative pt-32 pb-20 bg-gray-50 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-16 -right-16 w-80 h-80 bg-[#143C62]/5 rounded-full" />
-          <div className="absolute bottom-0 -left-12 w-56 h-56 bg-orange-500/5 rounded-full" />
-        </div>
+       {/* HERO AVEC IMAGE DE FOND - VERSION CORRIGÉE */}
+        <section className="relative min-h-125 md:min-h-150 flex items-center overflow-hidden">
+          
+          {/* Image de fond */}
+          <div 
+            className="absolute inset-0 w-full h-full z-0"
+            style={{
+              backgroundImage: `url(${contactBg})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center 30%",  /* Ajuste pour mieux cadrer l'image */
+              backgroundRepeat: "no-repeat",
+            }}
+          />
+          
+          {/* Overlay TRÈS LÉGER ou SUPPRIMÉ */}
+          {/* Option 1 : Supprimer complètement l'overlay */}
+          {/* Option 2 : Overlay très léger (noir 20%) */}
+          <div className="absolute inset-0 z-1 bg-black/20" />
+          
+          {/* Supprime les cercles décoratifs qui gênent */}
+          {/* <div className="absolute inset-0 pointer-events-none z-1">...</div> */}
 
-        <div
-          ref={heroRef}
-          className="relative z-10 max-w-2xl mx-auto px-6 text-center"
-          style={{
-            opacity: heroInView ? 1 : 0,
-            transform: heroInView ? "translateY(0)" : "translateY(30px)",
-            transition: "opacity 0.7s ease, transform 0.7s ease",
-          }}
-        >
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-400 mb-6">
-            <Link to="/" className="hover:text-[#143C62] transition-colors">Accueil</Link>
-            <span>/</span>
-            <span className="text-[#143C62] font-medium">Contact</span>
+          {/* Contenu - centré verticalement */}
+          <div
+            ref={heroRef}
+            className="relative z-10 max-w-2xl mx-auto px-6 text-center w-full py-16"
+            style={{
+              opacity: heroInView ? 1 : 0,
+              transform: heroInView ? "translateY(0)" : "translateY(30px)",
+              transition: "opacity 0.7s ease, transform 0.7s ease",
+            }}
+          >
+
+            {/* Badge */}
+            <span className="text-orange-400 font-semibold text-sm uppercase tracking-widest">
+              Parlons de votre projet
+            </span>
+            
+            {/* Titre */}
+            <h1 className="font-bold text-5xl md:text-6xl text-white mt-3 mb-6">
+              Contact
+            </h1>
+            
+            {/* Description */}
+            <p className="text-white/80 text-lg md:text-xl leading-relaxed">
+              Vous avez un projet en tête ? Une question technique ?
+              Écrivez-nous, nous vous répondrons sous 24h.
+            </p>
+
+            {/* Badge réponse */}
+            <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 text-green-300 text-sm font-medium px-4 py-2 rounded-full mt-6">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              Réponse garantie sous 24h
+            </div>
           </div>
-
-          <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">
-            Parlons de votre projet
-          </span>
-          <h1 className="font-bold text-5xl md:text-6xl text-[#143C62] mt-3 mb-6">
-            Contact
-          </h1>
-          <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-            Vous avez un projet en tête ? Une question technique ?
-            Écrivez-nous, nous vous répondrons sous 24h.
-          </p>
-
-          <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm font-medium px-4 py-2 rounded-full mt-6">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            Réponse garantie sous 24h
-          </div>
-        </div>
-      </section>
-
+        </section>
       {/* FORMULAIRE + INFOS */}
       <section className="py-20 bg-white">
         <div

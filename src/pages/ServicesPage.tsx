@@ -9,6 +9,8 @@ import { useInView } from "../hooks/useInView";
 import bambuImage from "../assets/bambu.png";
 import prototypeImage from "../assets/prototype.jpg";
 import domotiqueImage from "../assets/domotique.png";
+import systemeImage from "../assets/systeme.png";
+import automatiseImage from "../assets/automatisme.png";
 
 // ============================================================
 // Données des services
@@ -37,7 +39,7 @@ const servicesDetail = [
     id: 2,
     title: "Systèmes embarqués",
     tagline: "Développement de solutions hardware/software intégrées, du capteur au cloud.",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+    image: systemeImage,
     features: [
       "Firmware temps réel (FreeRTOS, Zephyr)",
       "Architectures ARM Cortex et FPGA",
@@ -55,7 +57,7 @@ const servicesDetail = [
     id: 3,
     title: "Automatisme",
     tagline: "Conception et mise en oeuvre de systèmes automatiques pour l'industrie et le bâtiment.",
-    image: "https://images.unsplash.com/photo-1581091877018-dac6a371d50f?w=800&q=80",
+    image: automatiseImage,
     features: [
       "Automates programmables (PLC, Arduino, Raspberry)",
       "Supervision SCADA et IIoT",
