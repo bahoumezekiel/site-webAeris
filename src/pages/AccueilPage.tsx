@@ -8,14 +8,15 @@ import { useState, useEffect, useCallback } from "react";
 import { useInView } from "../hooks/useInView";
 import ServiceCard from "../components/ServiceCard";
 import { services } from "../data/services";
+import ingenieur2 from "../assets/ingenieur2.png";
 
 /** Tableau d'object contenant les urls et labels des slides du carousel hero */
 const heroSlides = [
-  { src: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80", label: "Systèmes embarqués" },
-  { src: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1920&q=80", label: "Robotique" },
-  { src: "https://images.unsplash.com/photo-1581091877018-dac6a371d50f?w=1920&q=80", label: "Automatisme" },
-  { src: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1920&q=80", label: "Impression 3D" },
-  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80", label: "Domotique" },
+  { src: "src/assets/systeme.png", label: "Systèmes embarqués" },
+  { src: "src/assets/robotique.png", label: "Robotique" },
+  { src: "src/assets/automatisme.png", label: "Automatisme" },
+  { src: "src/assets/ingenieur.png", label: "Impression 3D" },
+  { src: "src/assets/domotique.png", label: "Domotique" },
 ];
 
 /**tableau d'object contenant les urls et labels des images de la galerie chaque image a un label et une catégorie pour le filtrage */
@@ -253,10 +254,9 @@ export default function AccueilPage() {
           style={{ zIndex: 2 }}
         />
 
-        {/* Overlays couleur */}
-        <div className="absolute inset-0 bg-linear-to-r from-[#143C62]/95 via-[#143C62]/80 to-[#143C62]/40" style={{ zIndex: 3 }} />
-        <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" style={{ zIndex: 3 }} />
-
+         {/* Overlays plus légers pour voir les images */}
+          <div className="absolute inset-0 bg-linear-to-r from-[#143C62]/60 via-[#143C62]/40 to-transparent" style={{ zIndex: 3 }} />
+          <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" style={{ zIndex: 3 }} />
         {/* Décoration géométrique */}
         <div className="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style={{ zIndex: 4 }}>
           <svg viewBox="0 0 800 800" className="w-full h-full" fill="none">
@@ -420,7 +420,11 @@ export default function AccueilPage() {
 
             <div style={{ opacity: aboutInView ? 1 : 0, transform: aboutInView ? "translateX(0)" : "translateX(40px)", transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s" }} className="relative">
               <div className="relative rounded-2xl overflow-hidden aspect-4/3 shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80" alt="Équipe Aeris Consulting au travail" className="w-full h-full object-cover" />
+                <img 
+                src={ingenieur2}
+                alt="Équipe Aeris Consulting au travail" 
+                className="w-full h-full object-cover"
+                 />
                 <div className="absolute inset-0 bg-linear-to-br from-[#143C62]/20 to-transparent" />
               </div>
               <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-5 flex items-center gap-4">

@@ -2,27 +2,29 @@
 // pages/ContactPage.tsx
 // Page Contact avec formulaire EmailJS
 //
-// CONFIGURATION EMAILJS - 3 étapes :
+// CONFIGURATION EMAILJS :
 // 1. Créer un compte sur https://www.emailjs.com
-// 2. Créer un "Email Service" (Gmail, Outlook...) → copier le Service ID
+// 2. Créer un "Email Service" → copier le Service ID
 // 3. Créer un "Email Template" → copier le Template ID
-// 4. Aller dans Account → copier la Public Key
-// 5. Remplacer les 3 constantes ci-dessous par vos vraies clés
+// 4. Account → copier la Public Key
+// 5. Créer un fichier .env à la racine du projet avec :
+//    VITE_EMAILJS_SERVICE_ID=service_xxxxxxx
+//    VITE_EMAILJS_TEMPLATE_ID=template_xxxxxxx
+//    VITE_EMAILJS_PUBLIC_KEY=xxxxxxxxxxxxxxxx
 // ============================================================
 
 import { useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
 import { useInView } from "../hooks/useInView";
-import contactBg from "../assets/ingenieur.png";
 
-// ============================================================
-// REMPLACER CES 3 VALEURS PAR VOS CLÉS EMAILJS
-// ============================================================
+// Clés EmailJS lues depuis les variables d'environnement
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;        // ex: "aBcDeFgHiJkLmNoPq"
-// ============================================================
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
+// ============================================================
+// Données statiques
+// ============================================================
 const sujets = [
   "Projet Robotique",
   "Systèmes embarqués",
@@ -47,7 +49,7 @@ const contactInfos = [
   {
     label: "Téléphone",
     value: "+226 67 42 83 16",
-    href: "tel:+22650504964",
+    href: "tel:+22667428316",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
         <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 17.72V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -56,8 +58,8 @@ const contactInfos = [
   },
   {
     label: "Adresse",
-    value: "uagadougou, Burkina Faso",
-    href: "https://maps.google.com",
+    value: "Ouagadougou, Burkina Faso",
+    href: "https://maps.google.com/?q=Ouagadougou,Burkina+Faso",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
         <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -78,6 +80,9 @@ const contactInfos = [
   },
 ];
 
+// ============================================================
+// Composant principal
+// ============================================================
 export default function ContactPage() {
   const { ref: heroRef, inView: heroInView } = useInView(0.1);
   const { ref: contentRef, inView: contentInView } = useInView(0.1);
@@ -92,6 +97,7 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
+  // Mise à jour d'un champ et effacement de son erreur
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -102,20 +108,29 @@ export default function ContactPage() {
     }
   };
 
+  // Validation avant envoi
   const validate = () => {
     const newErrors: Partial<typeof formData> = {};
-    if (!formData.nom.trim()) newErrors.nom = "Le nom est requis";
+    if (!formData.nom.trim()) {
+      newErrors.nom = "Le nom est requis";
+    }
     if (!formData.email.trim()) {
       newErrors.email = "L'email est requis";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email invalide";
+      newErrors.email = "Adresse email invalide";
     }
-    if (!formData.sujet) newErrors.sujet = "Veuillez choisir un sujet";
-    if (!formData.message.trim()) newErrors.message = "Le message est requis";
-    else if (formData.message.trim().length < 20) newErrors.message = "Message trop court (20 caractères min.)";
+    if (!formData.sujet) {
+      newErrors.sujet = "Veuillez choisir un sujet";
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = "Le message est requis";
+    } else if (formData.message.trim().length < 20) {
+      newErrors.message = "Message trop court (20 caractères minimum)";
+    }
     return newErrors;
   };
 
+  // Envoi via EmailJS
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -123,9 +138,10 @@ export default function ContactPage() {
       setErrors(validationErrors);
       return;
     }
-
     setStatus("sending");
     try {
+      // Les noms des champs (name="nom", name="email"...) doivent correspondre
+      // aux variables de votre template EmailJS : {{nom}}, {{email}}, {{sujet}}, {{message}}
       await emailjs.sendForm(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
@@ -139,6 +155,7 @@ export default function ContactPage() {
     }
   };
 
+  // Classe CSS des champs selon leur état d'erreur
   const inputClass = (field: keyof typeof formData) =>
     `w-full px-4 py-3 rounded-xl border text-gray-800 text-sm placeholder-gray-400 bg-white outline-none transition-all duration-200 ${
       errors[field]
@@ -149,63 +166,61 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
 
-       {/* HERO AVEC IMAGE DE FOND - VERSION CORRIGÉE */}
-        <section className="relative min-h-125 md:min-h-150 flex items-center overflow-hidden">
-          
-          {/* Image de fond */}
-          <div 
-            className="absolute inset-0 w-full h-full z-0"
-            style={{
-              backgroundImage: `url(${contactBg})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center 30%",  /* Ajuste pour mieux cadrer l'image */
-              backgroundRepeat: "no-repeat",
-            }}
-          />
-          
-          {/* Overlay TRÈS LÉGER ou SUPPRIMÉ */}
-          {/* Option 1 : Supprimer complètement l'overlay */}
-          {/* Option 2 : Overlay très léger (noir 20%) */}
-          <div className="absolute inset-0 z-1 bg-black/20" />
-          
-          {/* Supprime les cercles décoratifs qui gênent */}
-          {/* <div className="absolute inset-0 pointer-events-none z-1">...</div> */}
+      {/* ================================================
+          HERO - Fond bleu brand + décorations géométriques
+      ================================================ */}
+      <section className="relative pt-32 pb-24 bg-[#143C62] overflow-hidden">
 
-          {/* Contenu - centré verticalement */}
-          <div
-            ref={heroRef}
-            className="relative z-10 max-w-2xl mx-auto px-6 text-center w-full py-16"
-            style={{
-              opacity: heroInView ? 1 : 0,
-              transform: heroInView ? "translateY(0)" : "translateY(30px)",
-              transition: "opacity 0.7s ease, transform 0.7s ease",
-            }}
-          >
+        {/* Texture grille décorative */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <svg viewBox="0 0 100 100" className="w-full h-full">
+            <defs>
+              <pattern id="grid-contact" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid-contact)" />
+          </svg>
+        </div>
 
-            {/* Badge */}
-            <span className="text-orange-400 font-semibold text-sm uppercase tracking-widest">
-              Parlons de votre projet
-            </span>
-            
-            {/* Titre */}
-            <h1 className="font-bold text-5xl md:text-6xl text-white mt-3 mb-6">
-              Contact
-            </h1>
-            
-            {/* Description */}
-            <p className="text-white/80 text-lg md:text-xl leading-relaxed">
-              Vous avez un projet en tête ? Une question technique ?
-              Écrivez-nous, nous vous répondrons sous 24h.
-            </p>
+        {/* Cercles décoratifs */}
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-orange-500/10 rounded-full pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-white/5 rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-orange-500/5 rounded-full pointer-events-none" />
 
-            {/* Badge réponse */}
-            <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 text-green-300 text-sm font-medium px-4 py-2 rounded-full mt-6">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              Réponse garantie sous 24h
-            </div>
+        {/* Contenu */}
+        <div
+          ref={heroRef}
+          className="relative z-10 max-w-2xl mx-auto px-6 text-center"
+          style={{
+            opacity: heroInView ? 1 : 0,
+            transform: heroInView ? "translateY(0)" : "translateY(30px)",
+            transition: "opacity 0.7s ease, transform 0.7s ease",
+          }}
+        >
+           
+          <span className="text-orange-400 font-semibold text-sm uppercase tracking-widest">
+            Parlons de votre projet
+          </span>
+          <h1 className="font-bold text-5xl md:text-6xl text-white mt-3 mb-6">
+            Contact
+          </h1>
+          <p className="text-white/70 text-lg md:text-xl leading-relaxed">
+            Vous avez un projet en tête ? Une question technique ?
+            Écrivez-nous, nous vous répondrons sous 24h.
+          </p>
+
+          {/* Badge réponse rapide */}
+          <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 text-green-300 text-sm font-medium px-4 py-2 rounded-full mt-6">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            Réponse garantie sous 24h
           </div>
-        </section>
-      {/* FORMULAIRE + INFOS */}
+        </div>
+      </section>
+
+      {/* ================================================
+          SECTION PRINCIPALE : Infos + Formulaire
+      ================================================ */}
       <section className="py-20 bg-white">
         <div
           ref={contentRef}
@@ -218,15 +233,17 @@ export default function ContactPage() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-start">
 
-            {/* Infos de contact */}
+            {/* ---- Colonne gauche : coordonnées ---- */}
             <div className="lg:col-span-2 space-y-6">
               <div>
                 <h2 className="font-bold text-2xl text-[#143C62] mb-2">Nos coordonnées</h2>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  Notre équipe est disponible du lundi au vendredi pour répondre à toutes vos questions.
+                  Notre équipe est disponible du lundi au vendredi pour répondre
+                  à toutes vos questions.
                 </p>
               </div>
 
+              {/* Cartes d'information */}
               {contactInfos.map((info) => (
                 <div
                   key={info.label}
@@ -255,7 +272,9 @@ export default function ContactPage() {
 
               {/* Réseaux sociaux */}
               <div className="pt-2">
-                <p className="text-gray-400 text-xs uppercase tracking-widest font-semibold mb-3">Suivez-nous</p>
+                <p className="text-gray-400 text-xs uppercase tracking-widest font-semibold mb-3">
+                  Suivez-nous
+                </p>
                 <div className="flex gap-3">
                   {[
                     {
@@ -293,10 +312,11 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Formulaire */}
+            {/* ---- Colonne droite : formulaire ---- */}
             <div className="lg:col-span-3">
               <div className="bg-gray-50 border border-gray-100 rounded-3xl p-8 md:p-10 shadow-sm">
 
+                {/* Écran de succès après envoi */}
                 {status === "success" ? (
                   <div className="text-center py-12">
                     <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -321,6 +341,7 @@ export default function ContactPage() {
                       Envoyez-nous un message
                     </h2>
 
+                    {/* Nom + Email */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -334,7 +355,9 @@ export default function ContactPage() {
                           placeholder="Jean Dupont"
                           className={inputClass("nom")}
                         />
-                        {errors.nom && <p className="text-red-500 text-xs mt-1">{errors.nom}</p>}
+                        {errors.nom && (
+                          <p className="text-red-500 text-xs mt-1">{errors.nom}</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -348,10 +371,13 @@ export default function ContactPage() {
                           placeholder="jean@exemple.fr"
                           className={inputClass("email")}
                         />
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                        {errors.email && (
+                          <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                        )}
                       </div>
                     </div>
 
+                    {/* Sujet */}
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Sujet <span className="text-orange-500">*</span>
@@ -367,9 +393,12 @@ export default function ContactPage() {
                           <option key={s} value={s}>{s}</option>
                         ))}
                       </select>
-                      {errors.sujet && <p className="text-red-500 text-xs mt-1">{errors.sujet}</p>}
+                      {errors.sujet && (
+                        <p className="text-red-500 text-xs mt-1">{errors.sujet}</p>
+                      )}
                     </div>
 
+                    {/* Message */}
                     <div className="mb-6">
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Message <span className="text-orange-500">*</span>
@@ -388,16 +417,21 @@ export default function ContactPage() {
                         ) : (
                           <span />
                         )}
-                        <span className="text-gray-300 text-xs">{formData.message.length} caractères</span>
+                        <span className="text-gray-300 text-xs">
+                          {formData.message.length} caractères
+                        </span>
                       </div>
                     </div>
 
+                    {/* Erreur d'envoi EmailJS */}
                     {status === "error" && (
                       <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-                        Une erreur s'est produite. Vérifiez vos clés EmailJS ou contactez-nous directement par email.
+                        Une erreur s'est produite. Vérifiez vos clés EmailJS dans le fichier .env
+                        ou contactez-nous directement par email.
                       </div>
                     )}
 
+                    {/* Bouton envoi */}
                     <button
                       onClick={handleSubmit}
                       disabled={status === "sending"}
@@ -422,7 +456,8 @@ export default function ContactPage() {
                     </button>
 
                     <p className="text-gray-400 text-xs mt-4">
-                      En envoyant ce formulaire, vous acceptez que vos données soient utilisées pour traiter votre demande.
+                      En envoyant ce formulaire, vous acceptez que vos données soient utilisées
+                      pour traiter votre demande.
                     </p>
                   </form>
                 )}
