@@ -4,6 +4,7 @@
 // ============================================================
 
 import { Link } from "react-router-dom";
+import logoAeris from "../assets/logo.png";
 
 export default function Footer() {
   return (
@@ -11,16 +12,16 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
 
+         
           {/* Colonne marque */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 bg-[#143C62] rounded-lg flex items-center justify-center">
-                <svg viewBox="0 0 32 32" fill="none" className="w-5 h-5">
-                  <path d="M6 26 L16 6 L26 26" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M10 20 L22 20" stroke="#E05A1B" strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="16" cy="6" r="2" fill="#E05A1B" />
-                </svg>
-              </div>
+              {/* Image logo */}
+              <img 
+                src={logoAeris} 
+                alt="Aeris Consulting Logo"
+                className="w-15 h-12 object-contain"
+              />
               <span className="font-display text-[#143C62] text-base">
                 Aeris{" "}
                 <span className="text-gray-500 font-normal" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>

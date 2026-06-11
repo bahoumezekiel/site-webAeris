@@ -40,7 +40,7 @@ export default function Navbar() {
           <img
             src={logo}
             alt="Logo Aeris Consulting"
-            className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="h-40 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </Link>
 

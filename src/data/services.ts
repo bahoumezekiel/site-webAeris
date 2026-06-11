@@ -36,9 +36,9 @@ export const services: Service[] = [
   {
     id: 4,
     title: "Impression & Modélisation 3D",
-    image: "src/assets/bambu.png",
+    image: "src/assets/imprimante.png",
     description:
-      "Prototypage rapide, modélisation CAO, impression FDM/SLA et post-traitement de pièces. Du concept à la pièce physique en quelques heures pour valider vos idées avant industrialisation.",
+      "Prototypage rapide, modélisation FreeCAD,DAO impression FDM/SLA et post-traitement de pièces. Du concept à la pièce physique en quelques heures pour valider vos idées avant industrialisation.",
   },
   {
     id: 5,

@@ -1,43 +1,67 @@
 // ============================================================
 // pages/AccueilPage.tsx
-// Hero avec carousel à défilement (slide) + Services + À propos + Galerie + CTA
+// Hero carousel amélioré + Galerie épurée et adaptée
 // ============================================================
 
-import { Link } from "react-router-dom"; // permet de naviguer sans recharger la page
+import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { useInView } from "../hooks/useInView";
 import ServiceCard from "../components/ServiceCard";
 import { services } from "../data/services";
 import ingenieur2 from "../assets/ingenieur2.png";
+import imprimante from "../assets/imprimante.png";
+import robotique from "../assets/robotique.png";
+import automatisme from "../assets/automatisme.png";
+import ingenieur from "../assets/ingenieur.png";
+import domotique from "../assets/domotique.png";
+import galeri1 from "../assets/image1.jpeg"
+import galeri2 from "../assets/image2.jpeg"
+import galeri3 from "../assets/image3.jpeg"
+import galeri4 from "../assets/image4.jpeg"
+import galeri5 from "../assets/image5.jpeg"
 
-/** Tableau d'object contenant les urls et labels des slides du carousel hero */
 const heroSlides = [
-  { src: "src/assets/systeme.png", label: "Systèmes embarqués" },
-  { src: "src/assets/robotique.png", label: "Robotique" },
-  { src: "src/assets/automatisme.png", label: "Automatisme" },
-  { src: "src/assets/ingenieur.png", label: "Impression 3D" },
-  { src: "src/assets/domotique.png", label: "Domotique" },
+  { src: imprimante, label: "Impression 3D" },
+  { src: robotique, label: "Robotique" },
+  { src: automatisme, label: "Automatisme" },
+  { src: ingenieur, label: "Ingénierie" },
+  { src: domotique, label: "Domotique" },
 ];
 
-/**tableau d'object contenant les urls et labels des images de la galerie chaque image a un label et une catégorie pour le filtrage */
+// Images galerie : composants électroniques accessibles en Afrique
 const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80", label: "Robotique industrielle", category: "Robotique" },
-  { src: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80", label: "Systèmes embarqués", category: "Embarqué" },
-  { src: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80", label: "Automatisation", category: "Automatisme" },
-  { src: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=800&q=80", label: "Impression 3D", category: "3D" },
-  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80", label: "Domotique connectée", category: "Domotique" },
-  { src: "https://images.unsplash.com/photo-1581082174218-59b33e8e0d28?w=800&q=80", label: "Prototypage", category: "Prototypage" },
+  {
+    src: galeri1,
+     
+  },
+  {
+    src: galeri2,
+    category: "Prototypage",
+  },
+  {
+    src: galeri3,
+    category: "IoT",
+  },
+  {
+    src: galeri4,
+    category: "Domotique",
+  },
+  {
+    src: galeri5,
+    category: "3D",
+  },
 ];
+
+const galleryFilters = ["Tous", "Embarqué", "Prototypage", "IoT", "Domotique", "3D", "Robotique", "Automatisme"];
 
 // ============================================================
-// Composant : Galerie avec filtres et lightbox
+// Composant : Galerie épurée — grille uniforme + lightbox simple
 // ============================================================
 function GallerySection() {
   const { ref, inView } = useInView();
+  const [activeFilter, setActiveFilter] = useState("Tous");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [activeFilter, setActiveFilter] = useState("Tous"); // stocke quel categorie est sélectionnée pour le filtrage
 
-  const filters = ["Tous", "Robotique", "Embarqué", "Automatisme", "3D", "Domotique", "Prototypage"];
   const filtered =
     activeFilter === "Tous"
       ? galleryImages
@@ -45,18 +69,16 @@ function GallerySection() {
 
   const closeLightbox = () => setLightboxIndex(null);
 
-  //va a l'image précédente ou suivante dans la lightbox en fonction de la touche appuyée
   const prevImage = useCallback(() => {
     setLightboxIndex((p) => (p !== null ? (p - 1 + filtered.length) % filtered.length : 0));
   }, [filtered.length]);
 
-  // va a l'image suivante 
   const nextImage = useCallback(() => {
     setLightboxIndex((p) => (p !== null ? (p + 1) % filtered.length : 0));
   }, [filtered.length]);
 
-  // Ajoute des écouteurs de clavier pour naviguer dans la lightbox et la fermer avec Escape
   useEffect(() => {
+    if (lightboxIndex === null) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeLightbox();
       if (e.key === "ArrowLeft") prevImage();
@@ -64,40 +86,44 @@ function GallerySection() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [prevImage, nextImage]);
+  }, [lightboxIndex, prevImage, nextImage]);
 
   return (
-    <section className="py-24 bg-[#0b1f35]">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-20 bg-[#0b1f35]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+
+        {/* En-tête */}
         <div
           ref={ref}
-          className="text-center mb-12"
+          className="text-center mb-10"
           style={{
             opacity: inView ? 1 : 0,
             transform: inView ? "translateY(0)" : "translateY(30px)",
             transition: "opacity 0.7s ease, transform 0.7s ease",
           }}
         >
-          <span className="text-orange-400 font-semibold text-sm uppercase tracking-widest">Notre univers</span>
-          <h2
-            className="text-4xl md:text-5xl text-white mt-3 mb-4 leading-tight"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}
-          >
-            Explorez notre galerie
+          <span className="text-orange-400 font-semibold text-sm uppercase tracking-widest">
+            Notre univers
+          </span>
+          <h2 className="text-3xl md:text-4xl text-white mt-3 mb-3 font-bold leading-tight">
+            Composants & réalisations
             <br />
-            <span className="text-orange-400">de réalisations</span>
+            <span className="text-orange-400">au cœur de l'Afrique</span>
           </h2>
-          <p className="text-white/50 text-base max-w-md mx-auto">Un aperçu de nos projets et domaines d'expertise</p>
+          <p className="text-white/50 text-sm max-w-sm mx-auto">
+            Équipements électroniques, modules IoT et systèmes que nous concevons et intégrons.
+          </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {filters.map((f) => (
+        {/* Filtres */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {galleryFilters.map((f) => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
                 activeFilter === f
-                  ? "bg-orange-500 text-white shadow-lg shadow-orange-500/30"
+                  ? "bg-orange-500 text-white shadow-md shadow-orange-500/30"
                   : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"
               }`}
             >
@@ -105,53 +131,162 @@ function GallerySection() {
             </button>
           ))}
         </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {filtered.map((img, i) => (
-            <div
-              key={img.src}
-              className={`relative overflow-hidden rounded-2xl cursor-pointer group ${i === 0 ? "md:row-span-2" : ""}`}
-              style={{
-                aspectRatio: i === 0 ? "3/4" : "4/3",
-                opacity: inView ? 1 : 0,
-                transform: inView ? "scale(1)" : "scale(0.95)",
-                transition: `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s`,
-              }}
-              onClick={() => setLightboxIndex(i)}
-            >
-              <img src={img.src} alt={img.label} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full mb-1">{img.category}</span>
-                <p className="text-white font-semibold text-sm">{img.label}</p>
-              </div>
+ 
+        {/* Grille : 1 grande image (2 colonnes) + 2 colonnes normales */}
+      <div
+        className="grid gap-3"
+        style={{ gridTemplateColumns: "2fr 1fr 1fr"}}
+      >
+        {/* Grande image gauche — occupe 2 lignes */}
+        {filtered.length > 0 && (
+          <div
+            className="relative overflow-hidden rounded-xl cursor-pointer group"
+            style={{
+              gridColumn: "1",
+              gridRow: "1 / 3",
+              opacity: inView ? 1 : 0,
+              transform: inView ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity 0.5s ease 0s, transform 0.5s ease 0s",
+            }}
+            onClick={() => setLightboxIndex(0)}
+          >
+            <img
+              src={filtered[0].src}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-4">
             </div>
-          ))}
+            <div className="absolute top-2 right-2 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-3.5 h-3.5">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+            </div>
+          </div>
+        )}
+
+    {/* 4 images normales — colonnes 2 et 3, inchangées */}
+    {filtered.slice(1, 5).map((img, i) => (
+      <div
+        key={img.src + i}
+        className="relative overflow-hidden rounded-xl cursor-pointer group"
+        style={{
+          opacity: inView ? 1 : 0,
+          transform: inView ? "translateY(0)" : "translateY(20px)",
+          transition: `opacity 0.5s ease ${(i + 1) * 0.08}s, transform 0.5s ease ${(i + 1) * 0.08}s`,
+        }}
+        onClick={() => setLightboxIndex(i + 1)}
+      >
+        <img
+          src={img.src}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+           
+        </div>
+        <div className="absolute top-2 right-2 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-3.5 h-3.5">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
         </div>
       </div>
+    ))}
+  </div>
+        {/* Message si filtre vide */}
+        {filtered.length === 0 && (
+          <p className="text-white/40 text-center py-10 text-sm">
+            Aucune image dans cette catégorie.
+          </p>
+        )}
+      </div>
 
+      {/* ── Lightbox ── */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={closeLightbox}>
-          <div className="relative max-w-4xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <img src={filtered[lightboxIndex].src} alt={filtered[lightboxIndex].label} className="w-full max-h-[80vh] object-contain rounded-xl" />
-            <div className="text-center mt-4">
-              <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full mr-2">{filtered[lightboxIndex].category}</span>
-              <span className="text-white/80 text-sm">{filtered[lightboxIndex].label}</span>
+        <div
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center px-4"
+          onClick={closeLightbox}
+        >
+          <div
+            className="relative w-full max-w-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Fermer */}
+            <button
+              className="absolute -top-10 right-0 w-9 h-9 bg-white/10 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors duration-200 z-10"
+              onClick={closeLightbox}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+                <path d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Image principale */}
+            <div className="rounded-2xl overflow-hidden">
+              <img
+                src={filtered[lightboxIndex].src}
+                className="w-full max-h-[70vh] object-contain bg-gray-900"
+              />
             </div>
-            <p className="text-white/40 text-xs text-center mt-2">{lightboxIndex + 1} / {filtered.length}</p>
-            <button className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 w-10 h-10 bg-white/10 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200" onClick={prevImage}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-5 h-5"><path d="M15 19l-7-7 7-7" /></svg>
+
+            {/* Info + compteur */}
+            <div className="flex items-center justify-between mt-4 px-1">
+              <div>
+                
+              </div>
+              <span className="text-white/40 text-xs">{lightboxIndex + 1} / {filtered.length}</span>
+            </div>
+
+            {/* Navigation précédent / suivant */}
+            <button
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 w-9 h-9 bg-white/10 hover:bg-orange-500 rounded-full hidden sm:flex items-center justify-center transition-colors duration-200"
+              onClick={prevImage}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
             </button>
-            <button className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 w-10 h-10 bg-white/10 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200" onClick={nextImage}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-5 h-5"><path d="M9 5l7 7-7 7" /></svg>
+            <button
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 w-9 h-9 bg-white/10 hover:bg-orange-500 rounded-full hidden sm:flex items-center justify-center transition-colors duration-200"
+              onClick={nextImage}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
             </button>
-            <button className="absolute -top-12 right-0 w-10 h-10 bg-white/10 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors duration-200" onClick={closeLightbox}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-5 h-5"><path d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-            <div className="flex gap-2 mt-4 justify-center overflow-x-auto pb-2">
+
+            {/* Navigation mobile : boutons en bas */}
+            <div className="flex justify-center gap-4 mt-4 sm:hidden">
+              <button
+                className="w-10 h-10 bg-white/10 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200"
+                onClick={prevImage}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+                  <path d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                className="w-10 h-10 bg-white/10 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200"
+                onClick={nextImage}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Miniatures */}
+            <div className="flex gap-2 mt-4 justify-center overflow-x-auto pb-1">
               {filtered.map((img, idx) => (
-                <button key={img.src} onClick={() => setLightboxIndex(idx)}
-                  className={`shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all duration-200 ${idx === lightboxIndex ? "border-orange-500 scale-105" : "border-transparent opacity-60 hover:opacity-100"}`}>
+                <button
+                  key={img.src + idx}
+                  onClick={() => setLightboxIndex(idx)}
+                  className={`shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                    idx === lightboxIndex
+                      ? "border-orange-500 scale-110"
+                      : "border-transparent opacity-50 hover:opacity-100"
+                  }`}
+                >
                   <img src={img.src} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
@@ -171,15 +306,11 @@ export default function AccueilPage() {
   const { ref: aboutTextRef, inView: aboutInView } = useInView();
   const { ref: ctaRef, inView: ctaInView } = useInView();
 
-  // ── État carousel hero ───────────────────────────────────
   const [currentSlide, setCurrentSlide] = useState(0);
   const [sliding, setSliding] = useState(false);
   const [direction, setDirection] = useState<"left" | "right">("left");
-  // ✅ FIX: useState au lieu de useRef — prevSlide est lu dans le JSX (rendu)
-  // donc un ref est interdit par react-hooks/refs. useState donne le bon re-render.
   const [prevSlide, setPrevSlide] = useState(0);
 
-  // ✅ goToSlide avec useCallback, déclaré avant le useEffect
   const goToSlide = useCallback(
     (index: number, dir: "left" | "right" = "left") => {
       if (sliding || index === currentSlide) return;
@@ -194,7 +325,6 @@ export default function AccueilPage() {
     [sliding, currentSlide]
   );
 
-  // Avance automatique toutes les 5s
   useEffect(() => {
     const timer = setInterval(() => {
       goToSlide((currentSlide + 1) % heroSlides.length, "left");
@@ -205,7 +335,6 @@ export default function AccueilPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900" style={{ fontFamily: "'DM Sans', sans-serif" }}>
 
-      {/* Keyframes des animations de défilement */}
       <style>{`
         @keyframes slideInFromRight {
           from { transform: translateX(100%); }
@@ -230,7 +359,7 @@ export default function AccueilPage() {
       `}</style>
 
       {/* ================================================
-          SECTION HERO — carousel à défilement
+          SECTION HERO — carousel avec overlay léger
       ================================================ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
 
@@ -240,7 +369,9 @@ export default function AccueilPage() {
             key={`exit-${prevSlide}`}
             src={heroSlides[prevSlide].src}
             alt=""
-            className={`absolute inset-0 w-full h-full object-cover ${direction === "left" ? "slide-exit-left" : "slide-exit-right"}`}
+            className={`absolute inset-0 w-full h-full object-cover ${
+              direction === "left" ? "slide-exit-left" : "slide-exit-right"
+            }`}
             style={{ zIndex: 1 }}
           />
         )}
@@ -250,15 +381,35 @@ export default function AccueilPage() {
           key={`enter-${currentSlide}`}
           src={heroSlides[currentSlide].src}
           alt={heroSlides[currentSlide].label}
-          className={`absolute inset-0 w-full h-full object-cover ${sliding ? (direction === "left" ? "slide-enter-left" : "slide-enter-right") : ""}`}
+          className={`absolute inset-0 w-full h-full object-cover ${
+            sliding
+              ? direction === "left"
+                ? "slide-enter-left"
+                : "slide-enter-right"
+              : ""
+          }`}
           style={{ zIndex: 2 }}
         />
 
-         {/* Overlays plus légers pour voir les images */}
-          <div className="absolute inset-0 bg-linear-to-r from-[#143C62]/60 via-[#143C62]/40 to-transparent" style={{ zIndex: 3 }} />
-          <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" style={{ zIndex: 3 }} />
-        {/* Décoration géométrique */}
-        <div className="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style={{ zIndex: 4 }}>
+        {/* Overlay : dégradé gauche fort + léger bas — laisse l'image visible à droite */}
+        <div
+          className="absolute inset-0"
+          style={{
+            zIndex: 3,
+            background:
+              "linear-gradient(105deg, rgba(20,60,98,0.92) 0%, rgba(20,60,98,0.75) 45%, rgba(20,60,98,0.30) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent"
+          style={{ zIndex: 3 }}
+        />
+
+        {/* Décoration géométrique — côté droit uniquement */}
+        <div
+          className="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none"
+          style={{ zIndex: 4 }}
+        >
           <svg viewBox="0 0 800 800" className="w-full h-full" fill="none">
             <circle cx="600" cy="200" r="300" stroke="white" strokeWidth="0.5" />
             <circle cx="600" cy="200" r="200" stroke="white" strokeWidth="0.5" />
@@ -268,117 +419,164 @@ export default function AccueilPage() {
           </svg>
         </div>
 
-        {/* Contenu hero */}
-        <div className="relative max-w-10xl mx-auto px-8 pt-25 w-full flex flex-col items-center" style={{ zIndex: 5 }}>
-          <div className="max-w-5xxl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-400/30 text-orange-300 text-sm font-medium px-4 py-1.5 rounded-full mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-              Ingénierie de pointe
-            </div>
+                {/* Contenu hero — CENTRÉ */}
+        <div
+          className="relative w-full max-w-7xl mx-auto px-6 sm:px-8 pt-20"
+          style={{ zIndex: 5 }}
+        >
+          <div className="max-w-3xxl mx-auto text-center">
+
+
+            {/* Titre */}
             <h1
-              className="text-white leading-tight mb-6"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 8vw, 6rem)", letterSpacing: "-0.02em" , lineHeight: "0.90" }}
+              className="text-white leading-none mb-6"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 900,
+                fontSize: "clamp(2.4rem, 6vw, 5rem)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.05,
+              }}
             >
-              L'innovation technique au
+              L'innovation technique
               <br />
-              service de{" "}
+              au service de{" "}
               <span style={{ color: "#f97316" }}>vos projets</span>
             </h1>
-            <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-5xl mx-auto">
-              Aeris Consulting vous accompagne dans la conception de solutions robotiques,
-              embarquées et automatisées. De l'idée au prototype fonctionnel.
+
+            {/* Description */}
+            <p className="text-white/75 text-base md:text-lg leading-relaxed mb-8 max-w-lg mx-auto">
+              Aeris Consulting vous accompagne dans la conception de solutions
+              robotiques, embarquées et automatisées. De l'idée au prototype fonctionnel.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 mb-20">
-              <Link to="/services" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/30 hover:-translate-y-0.5">
+
+            {/* CTA */}
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link
+                to="/services"
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/30 hover:-translate-y-0.5 text-sm"
+              >
                 Découvrir nos services
               </Link>
-              <Link to="/contact" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-8 py-4 rounded-xl backdrop-blur-sm transition-all duration-300">
+              <Link
+                to="/contact"
+                className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-7 py-3 rounded-xl backdrop-blur-sm transition-all duration-300 text-sm"
+              >
                 Nous contacter
               </Link>
             </div>
+
           </div>
         </div>
 
-        {/* Flèche gauche */}
+        {/* Flèches navigation — cachées sur très petit écran */}
         <button
-          onClick={() => goToSlide((currentSlide - 1 + heroSlides.length) % heroSlides.length, "right")}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-orange-500 border border-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+          onClick={() =>
+            goToSlide(
+              (currentSlide - 1 + heroSlides.length) % heroSlides.length,
+              "right"
+            )
+          }
+          className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-orange-500 border border-white/20 rounded-full items-center justify-center transition-all duration-200 hidden sm:flex"
           style={{ zIndex: 10 }}
           aria-label="Slide précédente"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-5 h-5"><path d="M15 19l-7-7 7-7" /></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+            <path d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
 
-        {/* Flèche droite */}
         <button
           onClick={() => goToSlide((currentSlide + 1) % heroSlides.length, "left")}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-orange-500 border border-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-orange-500 border border-white/20 rounded-full items-center justify-center transition-all duration-200 hidden sm:flex"
           style={{ zIndex: 10 }}
           aria-label="Slide suivante"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-5 h-5"><path d="M9 5l7 7-7 7" /></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
         </button>
 
         {/* Indicateurs bas */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3" style={{ zIndex: 10 }}>
+        <div
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+          style={{ zIndex: 10 }}
+        >
           {heroSlides.map((slide, i) => (
-            <button key={i} onClick={() => goToSlide(i, i > currentSlide ? "left" : "right")} aria-label={slide.label}>
+            <button
+              key={i}
+              onClick={() => goToSlide(i, i > currentSlide ? "left" : "right")}
+              aria-label={slide.label}
+            >
               <div
                 className="rounded-full transition-all duration-300"
                 style={{
-                  width: i === currentSlide ? "2rem" : "0.5rem",
-                  height: "0.5rem",
-                  backgroundColor: i === currentSlide ? "#f97316" : "rgba(255,255,255,0.4)",
+                  width: i === currentSlide ? "1.5rem" : "0.4rem",
+                  height: "0.4rem",
+                  backgroundColor:
+                    i === currentSlide ? "#f97316" : "rgba(255,255,255,0.35)",
                 }}
               />
             </button>
           ))}
         </div>
 
-        {/* Label slide */}
-        <div className="absolute bottom-10 right-8 text-white/40 text-xs tracking-widest uppercase" style={{ zIndex: 10 }}>
+        {/* Label slide courant */}
+        <div
+          className="absolute bottom-6 right-6 text-white/35 text-xs tracking-widest uppercase hidden sm:block"
+          style={{ zIndex: 10 }}
+        >
           {heroSlides[currentSlide].label}
-        </div>
-
-        {/* Flèche scroll */}
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-white/30 animate-bounce" style={{ zIndex: 10 }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5"><path d="M19 9l-7 7-7-7" /></svg>
         </div>
       </section>
 
       {/* ================================================
           SECTION SERVICES
       ================================================ */}
-      <section className="py-28 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-20 sm:py-28 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div
             ref={servicesRef}
-            className="text-center mb-16"
+            className="text-center mb-12"
             style={{
               opacity: servicesInView ? 1 : 0,
               transform: servicesInView ? "translateY(0)" : "translateY(30px)",
               transition: "opacity 0.7s ease, transform 0.7s ease",
             }}
           >
-            <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">Nos expertises</span>
-            <h2 className="text-4xl md:text-5xl text-[#143C62] mt-3 mb-5" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}>
+            <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">
+              Nos expertises
+            </span>
+            <h2
+              className="text-3xl md:text-5xl text-[#143C62] mt-3 mb-4 font-bold"
+            >
               Une équipe pluridisciplinaire
               <br />à votre service
             </h2>
-            <p className="text-gray-500 text-lg max-w-xl mx-auto">
-              De la robotique à la domotique, nous couvrons l'ensemble du spectre de l'ingénierie électronique et mécanique.
+            <p className="text-gray-500 text-base max-w-xl mx-auto">
+              De la robotique à la domotique, nous couvrons l'ensemble du spectre
+              de l'ingénierie électronique et mécanique.
             </p>
-            <p className="text-gray-400 text-sm mt-3">Cliquer sur une carte pour la retourner</p>
+            <p className="text-gray-400 text-sm mt-2">
+              Cliquer sur une carte pour la retourner
+            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {services.map((service, i) => (
               <ServiceCard key={service.id} service={service} index={i} />
             ))}
           </div>
-          <div className="text-center mt-12">
-            <Link to="/services" className="inline-flex items-center gap-2 text-[#143C62] font-semibold border border-[#143C62] px-8 py-3 rounded-xl hover:bg-[#143C62] hover:text-white transition-all duration-300">
+
+          <div className="text-center mt-10">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 text-[#143C62] font-semibold border border-[#143C62] px-7 py-3 rounded-xl hover:bg-[#143C62] hover:text-white transition-all duration-300 text-sm"
+            >
               Voir tous nos services
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
             </Link>
           </div>
         </div>
@@ -387,57 +585,86 @@ export default function AccueilPage() {
       {/* ================================================
           SECTION À PROPOS
       ================================================ */}
-      <section className="py-28 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="py-20 sm:py-28 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+            {/* Texte */}
             <div
               ref={aboutTextRef}
-              style={{ opacity: aboutInView ? 1 : 0, transform: aboutInView ? "translateX(0)" : "translateX(-40px)", transition: "opacity 0.8s ease, transform 0.8s ease" }}
+              style={{
+                opacity: aboutInView ? 1 : 0,
+                transform: aboutInView ? "translateX(0)" : "translateX(-40px)",
+                transition: "opacity 0.8s ease, transform 0.8s ease",
+              }}
             >
-              <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">À propos</span>
-              <h2 className="text-4xl md:text-5xl text-[#143C62] mt-3 mb-6 leading-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 ,}}>
+              <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">
+                À propos
+              </span>
+               <h2
+                className="text-5xxl md:text-5xl text-[#143C62] mt-2 mb-1 font-bold"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 700,
+                  lineHeight: 1.05,  // Même valeur que le titre Hero
+                  letterSpacing: "-0.02em",  // Optionnel : resserre les lettres
+                }}
+              >
                 Des ingénieurs passionnés par l'innovation
               </h2>
-              <p className="text-gray-600 text-lg leading-relaxed mb-5">
-                Fondée par des experts en électronique et mécatronique, Aeris Consulting allie rigueur technique et agilité pour transformer vos idées en solutions concrètes.
+              <p className="text-gray-600 text-base leading-relaxed mb-4">
+                Fondée par des Ingenieurs en électronique , informatiqu et mecanique, Aeris
+                Consulting allie rigueur technique et agilité pour transformer vos
+                idées en solutions concrètes.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-8">Notre approche : comprendre vos besoins, prototyper rapidement et industrialiser avec méthode.</p>
-              <ul className="space-y-3 mb-10">
-                {["Équipe d'ingénieurs certifiés et experts", "Méthodologie agile adaptée au hardware", "De l'idée au produit fini en un seul partenaire"].map((point) => (
-                  <li key={point} className="flex items-start gap-3 text-gray-700">
-                    <span className="mt-1 w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
-                      <svg viewBox="0 0 16 16" fill="none" className="w-3 h-3"><path d="M3 8l3.5 3.5L13 4" stroke="#E05A1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    </span>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/a-propos" className="inline-flex items-center gap-2 text-orange-500 font-semibold hover:gap-4 transition-all duration-300">
+              <p className="text-gray-600 text-base leading-relaxed mb-8">
+                Notre approche : comprendre vos besoins, prototyper rapidement et
+                industrialiser avec méthode.
+              </p>
+              <Link
+                to="/a-propos"
+                className="inline-flex items-center gap-2 text-orange-500 font-semibold hover:gap-4 transition-all duration-300"
+              >
                 En savoir plus
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
 
-            <div style={{ opacity: aboutInView ? 1 : 0, transform: aboutInView ? "translateX(0)" : "translateX(40px)", transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s" }} className="relative">
+            {/* Image */}
+            <div
+              style={{
+                opacity: aboutInView ? 1 : 0,
+                transform: aboutInView ? "translateX(0)" : "translateX(40px)",
+                transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s",
+              }}
+              className="relative"
+            >
               <div className="relative rounded-2xl overflow-hidden aspect-4/3 shadow-2xl">
-                <img 
-                src={ingenieur2}
-                alt="Équipe Aeris Consulting au travail" 
-                className="w-full h-full object-cover"
-                 />
+                <img
+                  src={ingenieur2}
+                  alt="Équipe Aeris Consulting"
+                  className="w-full h-full object-cover"
+                />
                 <div className="absolute inset-0 bg-linear-to-br from-[#143C62]/20 to-transparent" />
               </div>
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-5 flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#143C62] rounded-xl flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={1.5} className="w-6 h-6"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+
+              {/* Badge flottant */}
+              <div className="absolute -bottom-5 -left-4 sm:-bottom-6 sm:-left-6 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#143C62] rounded-xl flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={1.5} className="w-5 h-5">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
                 <div>
-                  <div className="text-2xl text-[#143C62]" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}>50+</div>
-                  <div className="text-gray-500 text-sm">Projets réalisés</div>
+                  <div className="text-xl font-bold text-[#143C62]">50+</div>
+                  <div className="text-gray-500 text-xs">Projets réalisés</div>
                 </div>
               </div>
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-orange-100 rounded-full -z-10" />
-              <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-blue-50 rounded-full -z-10" />
+
+              <div className="absolute -top-3 -right-3 w-20 h-20 bg-orange-100 rounded-full -z-10" />
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-blue-50 rounded-full -z-10" />
             </div>
           </div>
         </div>
@@ -451,7 +678,7 @@ export default function AccueilPage() {
       {/* ================================================
           SECTION CTA
       ================================================ */}
-      <section ref={ctaRef} className="relative py-16 bg-[#143C62] overflow-hidden">
+      <section ref={ctaRef} className="relative py-14 bg-[#143C62] overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none">
           <svg viewBox="0 0 100 100" className="w-full h-full">
             <defs>
@@ -462,19 +689,28 @@ export default function AccueilPage() {
             <rect width="100%" height="100%" fill="url(#grid)" />
           </svg>
         </div>
-        <div className="absolute top-0 right-0 w-72 h-72 bg-orange-500/10 rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+
         <div
-          className="relative z-10 max-w-3xl mx-auto px-6 text-center"
-          style={{ opacity: ctaInView ? 1 : 0, transform: ctaInView ? "translateY(0)" : "translateY(30px)", transition: "opacity 0.8s ease, transform 0.8s ease" }}
+          className="relative z-10 max-w-2xl mx-auto px-6 text-center"
+          style={{
+            opacity: ctaInView ? 1 : 0,
+            transform: ctaInView ? "translateY(0)" : "translateY(30px)",
+            transition: "opacity 0.8s ease, transform 0.8s ease",
+          }}
         >
-          <h2 className="text-3xl md:text-4xl text-white mb-4" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}>
+          <h2 className="text-2xl md:text-4xl text-white mb-4 font-bold">
             Prêt à concrétiser votre projet ?
           </h2>
-          <p className="text-white/70 text-base mb-8">
-            Discutons de vos besoins et explorons ensemble les solutions techniques les plus adaptées.
+          <p className="text-white/70 text-sm mb-7">
+            Discutons de vos besoins et explorons ensemble les solutions techniques
+            les plus adaptées.
           </p>
-          <Link to="/contact" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-semibold text-base px-10 py-3.5 rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/40 hover:-translate-y-1">
+          <Link
+            to="/contact"
+            className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-semibold px-9 py-3 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/40 hover:-translate-y-1 text-sm"
+          >
             Prendre rendez-vous
           </Link>
         </div>

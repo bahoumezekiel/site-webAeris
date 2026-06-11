@@ -6,7 +6,7 @@
 
 import { Link } from "react-router-dom";
 import { useInView } from "../hooks/useInView";
-import { useEffect, useRef, useState } from "react";
+import { useEffect,useState } from "react";
 
 // ============================================================
 // Données : valeurs de l'entreprise
@@ -64,7 +64,7 @@ const valeurs = [
 // Données : chiffres clés
 // ============================================================
 const chiffres = [
-  { value: 150, suffix: "+", label: "Projets réalisés" },
+  { value: 90, suffix: "+", label: "Projets réalisés" },
   { value: 25, suffix: "+", label: "Experts en équipe" },
   { value: 6, suffix: "", label: "Domaines d'expertise" },
   { value: 98, suffix: "%", label: "Clients satisfaits" },
@@ -185,7 +185,6 @@ export default function AProposPage() {
   const { ref: ctaRef, inView: ctaInView } = useInView(0.2);
 
   // Ref pour la ligne timeline animée
-  const timelineRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -226,8 +225,8 @@ export default function AProposPage() {
         </div>
       </section>
 
-      {/* ================================================
-          SECTION HISTOIRE + APPROCHE
+     {/* ================================================
+    SECTION HISTOIRE + APPROCHE (version simplifiée)
       ================================================ */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
@@ -241,91 +240,49 @@ export default function AProposPage() {
             }}
           >
 
-            {/* Notre histoire */}
-            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:border-[#143C62]/20 hover:shadow-lg transition-all duration-300 group">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 bg-[#143C62] rounded-xl flex items-center justify-center text-white shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-bold text-[#143C62]">Notre histoire</h2>
-              </div>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                Aeris Consulting a été fondée en 2018 par une équipe d'ingénieurs en mécatronique
-                et électronique. Après plusieurs années passées dans l'industrie et la recherche,
-                nous avons décidé de créer une structure agile capable d'accompagner les entreprises
-                sur l'ensemble du cycle de vie de leurs projets techniques.
+            {/* Notre histoire - Carte simple avec titre BLEU */}
+            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:border-[#143C62]/20 hover:shadow-lg transition-all duration-300 text-center">
+              <h2 
+                className="text-3xl md:text-4xl font-extrabold mb-5"
+                style={{ color: "#143C62" }}
+              >
+                Notre histoire
+              </h2>
+              <p className="text-gray-600 leading-relaxed mb-4 text-left">
+                Notre entreprise se positionne en tant qu'acteur majeur dans le domaine de la fabrication additive
+                et en conception électronique. En tant que partenaires dévoués des entreprises locales basées
+                au Burkina Faso, nous nous engageons à résoudre le défi persistant auquel font face ces
+                entités : l'accès difficile aux pièces de rechange essentielles pour leurs opérations et le
+                manque de systèmes électroniques sur mesure.
               </p>
-              <p className="text-gray-600 leading-relaxed">
-                Depuis, nous avons mené plus de 150 projets dans des domaines aussi variés que la
-                robotique industrielle, les systèmes embarqués médicaux, l'impression 3D de pièces
+              <p className="text-gray-600 leading-relaxed text-left">
+                Depuis, nous avons mené plus de 90 projets dans des domaines aussi variés que la
+                robotique industrielle, les systèmes embarqués, l'impression 3D de pièces
                 techniques et la domotique résidentielle.
               </p>
-
-              {/* Timeline compacte */}
-              <div className="mt-8 space-y-3" ref={timelineRef}>
-                {[
-                  { year: "2018", event: "Fondation d'Aeris Consulting" },
-                  { year: "2020", event: "Expansion vers la domotique et l'IoT" },
-                  { year: "2022", event: "Ouverture du laboratoire de prototypage 3D" },
-                  { year: "2024", event: "50+ clients actifs, 25 experts en équipe" },
-                ].map((item, i) => (
-                  <div key={item.year} className="flex items-center gap-4">
-                    <div
-                      className="w-14 text-xs font-bold shrink-0 transition-colors duration-300"
-                      style={{ color: histoireInView ? "#E05A1B" : "#9ca3af", transitionDelay: `${0.3 + i * 0.1}s` }}
-                    >
-                      {item.year}
-                    </div>
-                    <div className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
-                    <p className="text-gray-600 text-sm">{item.event}</p>
-                  </div>
-                ))}
-              </div>
             </div>
 
-            {/* Notre approche */}
-            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:border-orange-200 hover:shadow-lg transition-all duration-300">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-bold text-[#143C62]">Notre approche</h2>
-              </div>
-              <p className="text-gray-600 leading-relaxed mb-4">
+            {/* Notre approche - Carte simple avec titre ORANGE */}
+            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:border-orange-200 hover:shadow-lg transition-all duration-300 text-center">
+              <h2 
+                className="text-3xl md:text-4xl font-extrabold mb-5"
+                style={{ color: "#f97316" }}
+              >
+                Notre approche
+              </h2>
+              <p className="text-gray-600 leading-relaxed mb-4 text-left">
                 Nous croyons que le meilleur résultat naît d'une collaboration étroite avec nos
                 clients. C'est pourquoi nous privilégions une méthodologie itérative, transparente
                 et orientée résultats.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-8">
+              <p className="text-gray-600 leading-relaxed text-left">
                 Chaque projet commence par une phase d'écoute et d'analyse approfondie, suivie de
                 cycles de conception et de prototypage rapides qui permettent d'ajuster le cap en
                 continu. Notre objectif : livrer des solutions robustes, dans les délais et le
                 budget impartis.
               </p>
-
-              {/* Étapes de la méthode */}
-              <div className="space-y-4">
-                {[
-                  { step: "01", title: "Écoute & Analyse", desc: "Compréhension profonde du besoin" },
-                  { step: "02", title: "Conception & Prototypage", desc: "Itérations rapides et feedback continu" },
-                  { step: "03", title: "Validation & Livraison", desc: "Tests rigoureux et mise en production" },
-                ].map((item) => (
-                  <div key={item.step} className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-lg bg-[#143C62]/10 flex items-center justify-center shrink-0">
-                      <span className="text-[#143C62] text-xs font-bold">{item.step}</span>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800 text-sm">{item.title}</p>
-                      <p className="text-gray-500 text-xs mt-0.5">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
+
           </div>
         </div>
       </section>

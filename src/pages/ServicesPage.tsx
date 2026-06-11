@@ -6,10 +6,10 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { useInView } from "../hooks/useInView";
-import bambuImage from "../assets/bambu.png";
-import prototypeImage from "../assets/prototype.jpg";
+import bambuImage from "../assets/imprimante.png";
+import prototypeImage from "../assets/prototype.jpeg";
 import domotiqueImage from "../assets/domotique.png";
-import systemeImage from "../assets/systeme.png";
+import systemeImage from "../assets/systeme.jpeg";
 import automatiseImage from "../assets/automatisme.png";
 
 // ============================================================
@@ -44,7 +44,6 @@ const servicesDetail = [
       "Firmware temps réel (FreeRTOS, Zephyr)",
       "Architectures ARM Cortex et FPGA",
       "Protocoles de communication (CAN, SPI, I2C, Ethernet)",
-      "Sécurité et certification",
     ],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
@@ -77,10 +76,10 @@ const servicesDetail = [
     tagline: "Prototypage rapide et production de pièces sur mesure par impression additive.",
     image: bambuImage,
     features: [
+      "FREECAD et Fusion 360 pour la modélisation",
       "Modélisation CAO (Fusion 360, SolidWorks)",
       "Impression FDM, SLA et résine",
       "Post-traitement et finition",
-      "Conception pour l'impression 3D",
     ],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
@@ -95,10 +94,10 @@ const servicesDetail = [
     tagline: "Validation rapide de vos concepts par des itérations agiles et des bancs de test dédiés.",
     image: prototypeImage,
     features: [
-      "Proof of Concept (PoC) et MVP hardware",
-      "Bancs de test et caractérisation",
-      "Intégration mécanique/électronique/logiciel",
       "Cahier des charges technique",
+      "Proof of Concept (PoC) et MVP hardware",
+      "Intégration mécanique/électronique/logiciel",
+      "Bancs de test et caractérisation",
     ],
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
@@ -114,7 +113,7 @@ const servicesDetail = [
     image: domotiqueImage,
     features: [
       "Maison intelligente et objets connectés",
-      "Gestion énergétique et HVAC",
+      "Gestion énergétique et Données Biometrique",
       "Sécurité et surveillance",
       "Intégration assistants vocaux",
     ],
