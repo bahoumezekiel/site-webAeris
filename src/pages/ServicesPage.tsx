@@ -6,11 +6,11 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { useInView } from "../hooks/useInView";
-import bambuImage from "../assets/imprimante.png";
+import bambuImage from "../assets/imprimante.jpg";
 import prototypeImage from "../assets/prototype.jpeg";
-import domotiqueImage from "../assets/domotique.png";
+import domotiqueImage from "../assets/domotique.jpg";
 import systemeImage from "../assets/systeme.jpeg";
-import automatiseImage from "../assets/automatisme.png";
+import automatiseImage from "../assets/automatisme.jpg";
 
 // ============================================================
 // Données des services
@@ -19,8 +19,10 @@ const servicesDetail = [
   {
     id: 1,
     title: "Robotique",
-    tagline: "Conception et programmation de solutions robotiques adaptées à vos besoins industriels ou de recherche.",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
+    tagline:
+      "Conception et programmation de solutions robotiques adaptées à vos besoins industriels ou de recherche.",
+    image:
+      "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
     features: [
       "Robotique mobile et navigation autonome",
       "Bras robotisés et cobots",
@@ -28,9 +30,16 @@ const servicesDetail = [
       "ROS / ROS2 et middleware robotique",
     ],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="w-6 h-6"
+      >
         <rect x="5" y="11" width="14" height="10" rx="2" />
-        <path d="M12 11V7" /><circle cx="12" cy="5" r="2" />
+        <path d="M12 11V7" />
+        <circle cx="12" cy="5" r="2" />
         <path d="M5 15H2M22 15h-3" />
       </svg>
     ),
@@ -38,7 +47,8 @@ const servicesDetail = [
   {
     id: 2,
     title: "Systèmes embarqués",
-    tagline: "Développement de solutions hardware/software intégrées, du capteur au cloud.",
+    tagline:
+      "Développement de solutions hardware/software intégrées, du capteur au cloud.",
     image: systemeImage,
     features: [
       "Firmware temps réel (FreeRTOS, Zephyr)",
@@ -46,7 +56,13 @@ const servicesDetail = [
       "Protocoles de communication (CAN, SPI, I2C, Ethernet)",
     ],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="w-6 h-6"
+      >
         <rect x="2" y="6" width="20" height="12" rx="2" />
         <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h8" />
       </svg>
@@ -55,7 +71,8 @@ const servicesDetail = [
   {
     id: 3,
     title: "Automatisme",
-    tagline: "Conception et mise en oeuvre de systèmes automatiques pour l'industrie et le bâtiment.",
+    tagline:
+      "Conception et mise en oeuvre de systèmes automatiques pour l'industrie et le bâtiment.",
     image: automatiseImage,
     features: [
       "Automates programmables (PLC, Arduino, Raspberry)",
@@ -64,7 +81,13 @@ const servicesDetail = [
       "Intégration chaîne de production",
     ],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="w-6 h-6"
+      >
         <circle cx="12" cy="12" r="3" />
         <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
       </svg>
@@ -73,7 +96,8 @@ const servicesDetail = [
   {
     id: 4,
     title: "Impression & Modélisation 3D",
-    tagline: "Prototypage rapide et production de pièces sur mesure par impression additive.",
+    tagline:
+      "Prototypage rapide et production de pièces sur mesure par impression additive.",
     image: bambuImage,
     features: [
       "FREECAD et Fusion 360 pour la modélisation",
@@ -82,7 +106,13 @@ const servicesDetail = [
       "Post-traitement et finition",
     ],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="w-6 h-6"
+      >
         <path d="M12 2L2 7l10 5 10-5-10-5z" />
         <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
       </svg>
@@ -91,7 +121,8 @@ const servicesDetail = [
   {
     id: 5,
     title: "Prototypage",
-    tagline: "Validation rapide de vos concepts par des itérations agiles et des bancs de test dédiés.",
+    tagline:
+      "Validation rapide de vos concepts par des itérations agiles et des bancs de test dédiés.",
     image: prototypeImage,
     features: [
       "Cahier des charges technique",
@@ -100,7 +131,13 @@ const servicesDetail = [
       "Bancs de test et caractérisation",
     ],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="w-6 h-6"
+      >
         <path d="M9 2H5a2 2 0 0 0-2 2v4M15 2h4a2 2 0 0 1 2 2v4M3 16v4a2 2 0 0 0 2 2h4M21 16v4a2 2 0 0 1-2 2h-4" />
         <circle cx="12" cy="12" r="3" />
       </svg>
@@ -109,7 +146,8 @@ const servicesDetail = [
   {
     id: 6,
     title: "Domotique",
-    tagline: "Automatisation intelligente de vos espaces pour plus de confort, de sécurité et d'économies d'énergie.",
+    tagline:
+      "Automatisation intelligente de vos espaces pour plus de confort, de sécurité et d'économies d'énergie.",
     image: domotiqueImage,
     features: [
       "Maison intelligente et objets connectés",
@@ -118,7 +156,13 @@ const servicesDetail = [
       "Intégration assistants vocaux",
     ],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="w-6 h-6"
+      >
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
         <path d="M9 22V12h6v10" />
       </svg>
@@ -148,17 +192,20 @@ function BubblesCanvas() {
 
     // Paramètres des bulles
     type Bubble = {
-      x: number; y: number;
-      vx: number; vy: number;
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
       r: number;
-      alpha: number; alphaDir: number;
+      alpha: number;
+      alphaDir: number;
       color: string;
     };
 
     const COLORS = [
-      "rgba(249,115,22,",   // orange
-      "rgba(20,60,98,",     // bleu marine
-      "rgba(255,255,255,",  // blanc
+      "rgba(249,115,22,", // orange
+      "rgba(20,60,98,", // bleu marine
+      "rgba(255,255,255,", // blanc
     ];
 
     const bubbles: Bubble[] = Array.from({ length: 28 }, () => ({
@@ -195,8 +242,12 @@ function BubblesCanvas() {
 
         // Dessin cercle avec dégradé radial (effet 3D)
         const grad = ctx.createRadialGradient(
-          b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.1,
-          b.x, b.y, b.r
+          b.x - b.r * 0.3,
+          b.y - b.r * 0.3,
+          b.r * 0.1,
+          b.x,
+          b.y,
+          b.r,
         );
         grad.addColorStop(0, `${b.color}${(b.alpha * 1.6).toFixed(2)})`);
         grad.addColorStop(0.6, `${b.color}${b.alpha.toFixed(2)})`);
@@ -259,27 +310,52 @@ function ServiceBlock({
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-
           {/* Colonne texte */}
           <div className={isEven ? "order-1" : "order-1 lg:order-2"}>
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-[#143C62] rounded-xl flex items-center justify-center text-white">
                 {service.icon}
               </div>
-              <span className="text-5xl text-gray-100 select-none font-bold leading-none" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              <span
+                className="text-5xl text-gray-100 select-none font-bold leading-none"
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
+              >
                 0{service.id}
               </span>
             </div>
-            <h2 className="text-3xl md:text-4xl text-[#143C62] mb-4" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}>
+            <h2
+              className="text-3xl md:text-4xl text-[#143C62] mb-4"
+              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}
+            >
               {service.title}
             </h2>
-            <p className="text-gray-500 text-lg leading-relaxed mb-8">{service.tagline}</p>
+            <p className="text-gray-500 text-lg leading-relaxed mb-8">
+              {service.tagline}
+            </p>
             <ul className="space-y-3 mb-10">
               {service.features.map((feature) => (
-                <li key={feature} className="flex items-center gap-3 text-gray-700">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-orange-500 shrink-0">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-                    <path d="M22 4L12 14.01l-3-3" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                <li
+                  key={feature}
+                  className="flex items-center gap-3 text-gray-700"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="w-5 h-5 text-orange-500 shrink-0"
+                  >
+                    <path
+                      d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M22 4L12 14.01l-3-3"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                   {feature}
                 </li>
@@ -290,7 +366,13 @@ function ServiceBlock({
               className="inline-flex items-center gap-2 bg-[#143C62] hover:bg-orange-500 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300"
             >
               Discuter de votre projet
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                className="w-4 h-4"
+              >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
@@ -308,12 +390,18 @@ function ServiceBlock({
                 <div className="absolute inset-0 bg-linear-to-br from-[#143C62]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <div className="absolute -bottom-4 -right-4 bg-orange-500 text-white rounded-xl px-4 py-2 shadow-lg">
-                <span className="text-sm font-bold" style={{ fontFamily: "'DM Sans', sans-serif" }}>{service.title}</span>
+                <span
+                  className="text-sm font-bold"
+                  style={{ fontFamily: "'DM Sans', sans-serif" }}
+                >
+                  {service.title}
+                </span>
               </div>
-              <div className={`absolute -z-10 w-full h-full rounded-2xl bg-gray-100 top-3 ${isEven ? "left-3" : "-left-3"}`} />
+              <div
+                className={`absolute -z-10 w-full h-full rounded-2xl bg-gray-100 top-3 ${isEven ? "left-3" : "-left-3"}`}
+              />
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -328,12 +416,10 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-
       {/* ================================================
           HERO avec bulles dynamiques
       ================================================ */}
       <section className="relative pt-32 pb-20 bg-gray-50 overflow-hidden">
-
         {/* Canvas bulles — couche de fond */}
         <BubblesCanvas />
 
@@ -358,13 +444,17 @@ export default function ServicesPage() {
           </span>
           <h1
             className="text-5xl md:text-6xl text-[#143C62] mt-3 mb-6"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, letterSpacing: "-0.02em" }}
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 800,
+              letterSpacing: "-0.02em",
+            }}
           >
             Nos Services
           </h1>
           <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-            De la conception à la réalisation, nous accompagnons vos projets techniques
-            avec expertise et réactivité.
+            De la conception à la réalisation, nous accompagnons vos projets
+            techniques avec expertise et réactivité.
           </p>
 
           {/* Indicateurs de scroll / ancres */}
@@ -406,7 +496,8 @@ export default function ServicesPage() {
             Votre projet ne rentre dans aucune case ?
           </h2>
           <p className="text-white/70 text-lg mb-10">
-            Nous aimons les défis techniques hors norme. Décrivez-nous votre besoin, nous trouverons la solution.
+            Nous aimons les défis techniques hors norme. Décrivez-nous votre
+            besoin, nous trouverons la solution.
           </p>
           <Link
             to="/contact"
@@ -416,7 +507,6 @@ export default function ServicesPage() {
           </Link>
         </div>
       </section>
-
     </div>
   );
 }

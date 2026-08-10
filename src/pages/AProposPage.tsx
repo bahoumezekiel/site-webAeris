@@ -17,8 +17,8 @@ import { Link } from "react-router-dom";
 import { useInView } from "../hooks/useInView";
 
 // Logos des partenaires
-import wascalLogo from "../assets/wascal.png";
-import tangaLogo from "../assets/tanga.png";
+import wascalLogo from "../assets/wascal.jpg";
+import tangaLogo from "../assets/tanga.jpg";
 import paifLogo from "../assets/paif.jpg";
 import banqueMondialeLogo from "../assets/banque-mondiale.jpg";
 import aproposHero from "../assets/aeris.jpg";

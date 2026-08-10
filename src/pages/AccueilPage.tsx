@@ -8,17 +8,17 @@ import { useState, useEffect, useCallback } from "react";
 import { useInView } from "../hooks/useInView";
 import ServiceCard from "../components/ServiceCard";
 import { services } from "../data/services";
-import ingenieur2 from "../assets/ingenieur2.png";
-import imprimante from "../assets/imprimante.png";
-import robotique from "../assets/robotique.png";
-import automatisme from "../assets/automatisme.png";
-import ingenieur from "../assets/ingenieur.png";
-import domotique from "../assets/domotique.png";
-import galeri1 from "../assets/image1.jpeg"
-import galeri2 from "../assets/image2.jpeg"
-import galeri3 from "../assets/image3.jpeg"
-import galeri4 from "../assets/image4.jpeg"
-import galeri5 from "../assets/image5.jpeg"
+import ingenieur2 from "../assets/ingenieur2.jpg";
+import imprimante from "../assets/imprimante.jpg";
+import robotique from "../assets/robotique.jpg";
+import automatisme from "../assets/automatisme.jpg";
+import ingenieur from "../assets/ingenieur.jpg";
+import domotique from "../assets/domotique.jpg";
+import galeri1 from "../assets/image1.jpeg";
+import galeri2 from "../assets/image2.jpeg";
+import galeri3 from "../assets/image3.jpeg";
+import galeri4 from "../assets/image4.jpeg";
+import galeri5 from "../assets/image5.jpeg";
 
 const heroSlides = [
   { src: imprimante, label: "Impression 3D" },
@@ -32,7 +32,6 @@ const heroSlides = [
 const galleryImages = [
   {
     src: galeri1,
-     
   },
   {
     src: galeri2,
@@ -52,7 +51,16 @@ const galleryImages = [
   },
 ];
 
-const galleryFilters = ["Tous", "Embarqué", "Prototypage", "IoT", "Domotique", "3D", "Robotique", "Automatisme"];
+const galleryFilters = [
+  "Tous",
+  "Embarqué",
+  "Prototypage",
+  "IoT",
+  "Domotique",
+  "3D",
+  "Robotique",
+  "Automatisme",
+];
 
 // ============================================================
 // Composant : Galerie épurée — grille uniforme + lightbox simple
@@ -70,7 +78,9 @@ function GallerySection() {
   const closeLightbox = () => setLightboxIndex(null);
 
   const prevImage = useCallback(() => {
-    setLightboxIndex((p) => (p !== null ? (p - 1 + filtered.length) % filtered.length : 0));
+    setLightboxIndex((p) =>
+      p !== null ? (p - 1 + filtered.length) % filtered.length : 0,
+    );
   }, [filtered.length]);
 
   const nextImage = useCallback(() => {
@@ -91,7 +101,6 @@ function GallerySection() {
   return (
     <section className="py-20 bg-[#0b1f35]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-
         {/* En-tête */}
         <div
           ref={ref}
@@ -111,7 +120,8 @@ function GallerySection() {
             <span className="text-orange-400">au cœur de l'Afrique</span>
           </h2>
           <p className="text-white/50 text-sm max-w-sm mx-auto">
-            Équipements électroniques, modules IoT et systèmes que nous concevons et intégrons.
+            Équipements électroniques, modules IoT et systèmes que nous
+            concevons et intégrons.
           </p>
         </div>
 
@@ -131,68 +141,77 @@ function GallerySection() {
             </button>
           ))}
         </div>
- 
-        {/* Grille : 1 grande image (2 colonnes) + 2 colonnes normales */}
-      <div
-        className="grid gap-3"
-        style={{ gridTemplateColumns: "2fr 1fr 1fr"}}
-      >
-        {/* Grande image gauche — occupe 2 lignes */}
-        {filtered.length > 0 && (
-          <div
-            className="relative overflow-hidden rounded-xl cursor-pointer group"
-            style={{
-              gridColumn: "1",
-              gridRow: "1 / 3",
-              opacity: inView ? 1 : 0,
-              transform: inView ? "translateY(0)" : "translateY(20px)",
-              transition: "opacity 0.5s ease 0s, transform 0.5s ease 0s",
-            }}
-            onClick={() => setLightboxIndex(0)}
-          >
-            <img
-              src={filtered[0].src}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-            </div>
-            <div className="absolute top-2 right-2 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-3.5 h-3.5">
-                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-              </svg>
-            </div>
-          </div>
-        )}
 
-    {/* 4 images normales — colonnes 2 et 3, inchangées */}
-    {filtered.slice(1, 5).map((img, i) => (
-      <div
-        key={img.src + i}
-        className="relative overflow-hidden rounded-xl cursor-pointer group"
-        style={{
-          opacity: inView ? 1 : 0,
-          transform: inView ? "translateY(0)" : "translateY(20px)",
-          transition: `opacity 0.5s ease ${(i + 1) * 0.08}s, transform 0.5s ease ${(i + 1) * 0.08}s`,
-        }}
-        onClick={() => setLightboxIndex(i + 1)}
-      >
-        <img
-          src={img.src}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-           
+        {/* Grille : 1 grande image (2 colonnes) + 2 colonnes normales */}
+        <div
+          className="grid gap-3"
+          style={{ gridTemplateColumns: "2fr 1fr 1fr" }}
+        >
+          {/* Grande image gauche — occupe 2 lignes */}
+          {filtered.length > 0 && (
+            <div
+              className="relative overflow-hidden rounded-xl cursor-pointer group"
+              style={{
+                gridColumn: "1",
+                gridRow: "1 / 3",
+                opacity: inView ? 1 : 0,
+                transform: inView ? "translateY(0)" : "translateY(20px)",
+                transition: "opacity 0.5s ease 0s, transform 0.5s ease 0s",
+              }}
+              onClick={() => setLightboxIndex(0)}
+            >
+              <img
+                src={filtered[0].src}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-4"></div>
+              <div className="absolute top-2 right-2 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth={2}
+                  className="w-3.5 h-3.5"
+                >
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          )}
+
+          {/* 4 images normales — colonnes 2 et 3, inchangées */}
+          {filtered.slice(1, 5).map((img, i) => (
+            <div
+              key={img.src + i}
+              className="relative overflow-hidden rounded-xl cursor-pointer group"
+              style={{
+                opacity: inView ? 1 : 0,
+                transform: inView ? "translateY(0)" : "translateY(20px)",
+                transition: `opacity 0.5s ease ${(i + 1) * 0.08}s, transform 0.5s ease ${(i + 1) * 0.08}s`,
+              }}
+              onClick={() => setLightboxIndex(i + 1)}
+            >
+              <img
+                src={img.src}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3"></div>
+              <div className="absolute top-2 right-2 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth={2}
+                  className="w-3.5 h-3.5"
+                >
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="absolute top-2 right-2 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-3.5 h-3.5">
-            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-          </svg>
-        </div>
-      </div>
-    ))}
-  </div>
         {/* Message si filtre vide */}
         {filtered.length === 0 && (
           <p className="text-white/40 text-center py-10 text-sm">
@@ -216,7 +235,13 @@ function GallerySection() {
               className="absolute -top-10 right-0 w-9 h-9 bg-white/10 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors duration-200 z-10"
               onClick={closeLightbox}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth={2}
+                className="w-4 h-4"
+              >
                 <path d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -231,10 +256,10 @@ function GallerySection() {
 
             {/* Info + compteur */}
             <div className="flex items-center justify-between mt-4 px-1">
-              <div>
-                
-              </div>
-              <span className="text-white/40 text-xs">{lightboxIndex + 1} / {filtered.length}</span>
+              <div></div>
+              <span className="text-white/40 text-xs">
+                {lightboxIndex + 1} / {filtered.length}
+              </span>
             </div>
 
             {/* Navigation précédent / suivant */}
@@ -242,7 +267,13 @@ function GallerySection() {
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 w-9 h-9 bg-white/10 hover:bg-orange-500 rounded-full hidden sm:flex items-center justify-center transition-colors duration-200"
               onClick={prevImage}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth={2}
+                className="w-4 h-4"
+              >
                 <path d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -250,7 +281,13 @@ function GallerySection() {
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 w-9 h-9 bg-white/10 hover:bg-orange-500 rounded-full hidden sm:flex items-center justify-center transition-colors duration-200"
               onClick={nextImage}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth={2}
+                className="w-4 h-4"
+              >
                 <path d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -261,7 +298,13 @@ function GallerySection() {
                 className="w-10 h-10 bg-white/10 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200"
                 onClick={prevImage}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth={2}
+                  className="w-4 h-4"
+                >
                   <path d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
@@ -269,7 +312,13 @@ function GallerySection() {
                 className="w-10 h-10 bg-white/10 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200"
                 onClick={nextImage}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth={2}
+                  className="w-4 h-4"
+                >
                   <path d="M9 5l7 7-7 7" />
                 </svg>
               </button>
@@ -287,7 +336,11 @@ function GallerySection() {
                       : "border-transparent opacity-50 hover:opacity-100"
                   }`}
                 >
-                  <img src={img.src} alt="" className="w-full h-full object-cover" />
+                  <img
+                    src={img.src}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -322,7 +375,7 @@ export default function AccueilPage() {
         setSliding(false);
       }, 600);
     },
-    [sliding, currentSlide]
+    [sliding, currentSlide],
   );
 
   useEffect(() => {
@@ -333,8 +386,10 @@ export default function AccueilPage() {
   }, [currentSlide, goToSlide]);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-
+    <div
+      className="min-h-screen bg-white text-gray-900"
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+    >
       <style>{`
         @keyframes slideInFromRight {
           from { transform: translateX(100%); }
@@ -362,7 +417,6 @@ export default function AccueilPage() {
           SECTION HERO — carousel avec overlay léger
       ================================================ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-
         {/* Image sortante */}
         {sliding && (
           <img
@@ -411,22 +465,52 @@ export default function AccueilPage() {
           style={{ zIndex: 4 }}
         >
           <svg viewBox="0 0 800 800" className="w-full h-full" fill="none">
-            <circle cx="600" cy="200" r="300" stroke="white" strokeWidth="0.5" />
-            <circle cx="600" cy="200" r="200" stroke="white" strokeWidth="0.5" />
-            <circle cx="600" cy="200" r="100" stroke="white" strokeWidth="0.5" />
-            <line x1="0" y1="400" x2="800" y2="400" stroke="white" strokeWidth="0.5" />
-            <line x1="400" y1="0" x2="400" y2="800" stroke="white" strokeWidth="0.5" />
+            <circle
+              cx="600"
+              cy="200"
+              r="300"
+              stroke="white"
+              strokeWidth="0.5"
+            />
+            <circle
+              cx="600"
+              cy="200"
+              r="200"
+              stroke="white"
+              strokeWidth="0.5"
+            />
+            <circle
+              cx="600"
+              cy="200"
+              r="100"
+              stroke="white"
+              strokeWidth="0.5"
+            />
+            <line
+              x1="0"
+              y1="400"
+              x2="800"
+              y2="400"
+              stroke="white"
+              strokeWidth="0.5"
+            />
+            <line
+              x1="400"
+              y1="0"
+              x2="400"
+              y2="800"
+              stroke="white"
+              strokeWidth="0.5"
+            />
           </svg>
         </div>
 
-                {/* Contenu hero — CENTRÉ */}
+        {/* Contenu hero — CENTRÉ */}
         <div
           className="relative w-full max-w-7xl mx-auto px-6 sm:px-8 pt-20"
           style={{ zIndex: 5 }}
         >
           <div className="max-w-3xxl mx-auto text-center">
-
-
             {/* Titre */}
             <h1
               className="text-white leading-none mb-6"
@@ -447,7 +531,8 @@ export default function AccueilPage() {
             {/* Description */}
             <p className="text-white/75 text-base md:text-lg leading-relaxed mb-8 max-w-lg mx-auto">
               Aeris Consulting vous accompagne dans la conception de solutions
-              robotiques, embarquées et automatisées. De l'idée au prototype fonctionnel.
+              robotiques, embarquées et automatisées. De l'idée au prototype
+              fonctionnel.
             </p>
 
             {/* CTA */}
@@ -465,7 +550,6 @@ export default function AccueilPage() {
                 Nous contacter
               </Link>
             </div>
-
           </div>
         </div>
 
@@ -474,25 +558,39 @@ export default function AccueilPage() {
           onClick={() =>
             goToSlide(
               (currentSlide - 1 + heroSlides.length) % heroSlides.length,
-              "right"
+              "right",
             )
           }
           className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-orange-500 border border-white/20 rounded-full items-center justify-center transition-all duration-200 hidden sm:flex"
           style={{ zIndex: 10 }}
           aria-label="Slide précédente"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth={2}
+            className="w-4 h-4"
+          >
             <path d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
         <button
-          onClick={() => goToSlide((currentSlide + 1) % heroSlides.length, "left")}
+          onClick={() =>
+            goToSlide((currentSlide + 1) % heroSlides.length, "left")
+          }
           className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-orange-500 border border-white/20 rounded-full items-center justify-center transition-all duration-200 hidden sm:flex"
           style={{ zIndex: 10 }}
           aria-label="Slide suivante"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth={2}
+            className="w-4 h-4"
+          >
             <path d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -547,15 +645,13 @@ export default function AccueilPage() {
             <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">
               Nos expertises
             </span>
-            <h2
-              className="text-3xl md:text-5xl text-[#143C62] mt-3 mb-4 font-bold"
-            >
+            <h2 className="text-3xl md:text-5xl text-[#143C62] mt-3 mb-4 font-bold">
               Une équipe pluridisciplinaire
               <br />à votre service
             </h2>
             <p className="text-gray-500 text-base max-w-xl mx-auto">
-              De la robotique à la domotique, nous couvrons l'ensemble du spectre
-              de l'ingénierie électronique et mécanique.
+              De la robotique à la domotique, nous couvrons l'ensemble du
+              spectre de l'ingénierie électronique et mécanique.
             </p>
             <p className="text-gray-400 text-sm mt-2">
               Cliquer sur une carte pour la retourner
@@ -574,7 +670,13 @@ export default function AccueilPage() {
               className="inline-flex items-center gap-2 text-[#143C62] font-semibold border border-[#143C62] px-7 py-3 rounded-xl hover:bg-[#143C62] hover:text-white transition-all duration-300 text-sm"
             >
               Voir tous nos services
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                className="w-4 h-4"
+              >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
@@ -588,7 +690,6 @@ export default function AccueilPage() {
       <section className="py-20 sm:py-28 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
             {/* Texte */}
             <div
               ref={aboutTextRef}
@@ -601,32 +702,38 @@ export default function AccueilPage() {
               <span className="text-orange-500 font-semibold text-sm uppercase tracking-widest">
                 À propos
               </span>
-               <h2
+              <h2
                 className="text-5xxl md:text-5xl text-[#143C62] mt-2 mb-1 font-bold"
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 700,
-                  lineHeight: 1.05,  // Même valeur que le titre Hero
-                  letterSpacing: "-0.02em",  // Optionnel : resserre les lettres
+                  lineHeight: 1.05, // Même valeur que le titre Hero
+                  letterSpacing: "-0.02em", // Optionnel : resserre les lettres
                 }}
               >
                 Des ingénieurs passionnés par l'innovation
               </h2>
               <p className="text-gray-600 text-base leading-relaxed mb-4">
-                Fondée par des Ingenieurs en électronique , informatiqu et mecanique, Aeris
-                Consulting allie rigueur technique et agilité pour transformer vos
-                idées en solutions concrètes.
+                Fondée par des Ingenieurs en électronique , informatiqu et
+                mecanique, Aeris Consulting allie rigueur technique et agilité
+                pour transformer vos idées en solutions concrètes.
               </p>
               <p className="text-gray-600 text-base leading-relaxed mb-8">
-                Notre approche : comprendre vos besoins, prototyper rapidement et
-                industrialiser avec méthode.
+                Notre approche : comprendre vos besoins, prototyper rapidement
+                et industrialiser avec méthode.
               </p>
               <Link
                 to="/a-propos"
                 className="inline-flex items-center gap-2 text-orange-500 font-semibold hover:gap-4 transition-all duration-300"
               >
                 En savoir plus
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  className="w-4 h-4"
+                >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </Link>
@@ -653,7 +760,13 @@ export default function AccueilPage() {
               {/* Badge flottant */}
               <div className="absolute -bottom-5 -left-4 sm:-bottom-6 sm:-left-6 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#143C62] rounded-xl flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={1.5} className="w-5 h-5">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth={1.5}
+                    className="w-5 h-5"
+                  >
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -678,12 +791,27 @@ export default function AccueilPage() {
       {/* ================================================
           SECTION CTA
       ================================================ */}
-      <section ref={ctaRef} className="relative py-14 bg-[#143C62] overflow-hidden">
+      <section
+        ref={ctaRef}
+        className="relative py-14 bg-[#143C62] overflow-hidden"
+      >
         <div className="absolute inset-0 opacity-5 pointer-events-none">
           <svg viewBox="0 0 100 100" className="w-full h-full">
             <defs>
-              <pattern id="grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
+              <pattern
+                id="grid"
+                x="0"
+                y="0"
+                width="10"
+                height="10"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 10 0 L 0 0 0 10"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="0.5"
+                />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
@@ -704,8 +832,8 @@ export default function AccueilPage() {
             Prêt à concrétiser votre projet ?
           </h2>
           <p className="text-white/70 text-sm mb-7">
-            Discutons de vos besoins et explorons ensemble les solutions techniques
-            les plus adaptées.
+            Discutons de vos besoins et explorons ensemble les solutions
+            techniques les plus adaptées.
           </p>
           <Link
             to="/contact"
@@ -715,7 +843,6 @@ export default function AccueilPage() {
           </Link>
         </div>
       </section>
-
     </div>
   );
 }
