@@ -1,18 +1,17 @@
 // ============================================================
 // pages/ContactPage.tsx
-// Page Contact — formulaire relié à EmailJS
+// Page Contact — composition en deux panneaux :
+//   • panneau bleu Aeris (coordonnées) à gauche
+//   • formulaire sur fond clair à droite
 //
 // NOTE SUR LES CLÉS
 // La Public Key EmailJS n'est pas un secret : Vite l'inline dans le
-// bundle JS livré au navigateur, elle est donc lisible par tous quoi
-// qu'il arrive. Elle est écrite en clair ici pour éviter toute
-// dépendance aux variables de build (Docker / Dokploy), source de
-// pannes silencieuses en production.
-// La protection réelle se fait côté EmailJS :
-//   Account > Security > Allowed Origins → ajouter le domaine du site
+// bundle livré au navigateur, elle est donc lisible quoi qu'il arrive.
+// Elle est écrite en clair pour éviter toute dépendance aux variables
+// de build (Docker / Dokploy), source de pannes silencieuses.
 // ============================================================
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import { useInView } from "../hooks/useInView";
 
@@ -21,10 +20,9 @@ const EMAILJS_SERVICE_ID = "service_nc73soi";
 const EMAILJS_TEMPLATE_ID = "template_rb7to6k";
 const EMAILJS_PUBLIC_KEY = "pdvy58y_12XizQ7bM";
 
-// Adresse affichée et utilisée comme recours si l'envoi échoue
 const CONTACT_EMAIL = "aerisconsultingbf@gmail.com";
 
-// ── Sujets proposés dans le formulaire ───────────────────────
+// ── Sujets proposés ──────────────────────────────────────────
 const sujets = [
   "Projet robotique",
   "Systèmes embarqués",
@@ -35,27 +33,72 @@ const sujets = [
   "Autre demande",
 ];
 
-// ── Coordonnées ──────────────────────────────────────────────
+// ── Coordonnées affichées dans le panneau bleu ───────────────
 const coordonnees = [
   {
     label: "Email",
     value: CONTACT_EMAIL,
     href: `mailto:${CONTACT_EMAIL}`,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-[18px] h-[18px]">
+        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+    ),
   },
   {
     label: "Téléphone",
     value: "+226 67 42 83 16",
     href: "tel:+22667428316",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-[18px] h-[18px]">
+        <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 17.72V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+      </svg>
+    ),
   },
   {
     label: "Adresse",
     value: "Ouagadougou, Burkina Faso",
     href: null,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-[18px] h-[18px]">
+        <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
   },
   {
     label: "Horaires",
     value: "Lundi – Vendredi, 8h – 17h",
     href: null,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-[18px] h-[18px]">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+    ),
+  },
+];
+
+// ── Réseaux sociaux ──────────────────────────────────────────
+const reseaux = [
+  {
+    label: "LinkedIn",
+    href: "#",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+        <circle cx="4" cy="4" r="2" />
+      </svg>
+    ),
+  },
+  {
+    label: "GitHub",
+    href: "#",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+      </svg>
+    ),
   },
 ];
 
@@ -63,9 +106,8 @@ const coordonnees = [
 // Composant principal
 // ============================================================
 export default function ContactPage() {
-  const { ref: contentRef, inView: contentInView } = useInView(0.05);
+  const { ref: panelRef, inView: panelInView } = useInView(0.05);
 
-  const formRef = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState({
     nom: "",
     email: "",
@@ -73,20 +115,16 @@ export default function ContactPage() {
     message: "",
   });
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
-  const [status, setStatus] = useState<
-    "idle" | "sending" | "success" | "error"
-  >("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
-  // Initialisation du SDK EmailJS au montage de la page
+  // Initialisation du SDK EmailJS
   useEffect(() => {
     emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   }, []);
 
   // Mise à jour d'un champ et effacement de son erreur
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -95,7 +133,7 @@ export default function ContactPage() {
     }
   };
 
-  // Validation des champs avant envoi
+  // Validation avant envoi
   const validate = () => {
     const next: Partial<typeof formData> = {};
     if (!formData.nom.trim()) {
@@ -112,8 +150,7 @@ export default function ContactPage() {
     if (!formData.message.trim()) {
       next.message = "Écrivez votre message";
     } else if (formData.message.trim().length < 20) {
-      next.message =
-        "Un peu plus de détails nous aiderait (20 caractères minimum)";
+      next.message = "Un peu plus de détails nous aiderait";
     }
     return next;
   };
@@ -131,9 +168,6 @@ export default function ContactPage() {
     setStatus("sending");
 
     try {
-      // On envoie l'état React plutôt que le DOM du formulaire :
-      // plus fiable, notamment avec l'autofill du navigateur qui ne
-      // déclenche pas toujours onChange.
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
@@ -143,173 +177,173 @@ export default function ContactPage() {
           sujet: formData.sujet,
           message: formData.message,
         },
-        { publicKey: EMAILJS_PUBLIC_KEY },
+        { publicKey: EMAILJS_PUBLIC_KEY }
       );
 
       setStatus("success");
       setFormData({ nom: "", email: "", sujet: "", message: "" });
     } catch (err) {
-      // Détail technique réservé à la console développeur —
-      // jamais exposé au visiteur
+      // Détail technique réservé à la console — jamais exposé au visiteur
       console.error("[Contact] Échec de l'envoi EmailJS :", err);
       setStatus("error");
     }
   };
 
-  // Style commun des champs
+  // Style commun des champs du formulaire
   const fieldClass = (field: keyof typeof formData) =>
-    `w-full bg-transparent border-0 border-b py-3 text-[15px] text-gray-900 placeholder-gray-400 outline-none transition-colors duration-200 ${
+    `w-full rounded-xl border bg-white px-4 py-3.5 text-[15px] text-gray-900 placeholder-gray-400 outline-none transition-all duration-200 ${
       errors[field]
-        ? "border-red-400 focus:border-red-500"
-        : "border-gray-200 focus:border-[#143C62]"
+        ? "border-red-300 focus:border-red-400 focus:ring-4 focus:ring-red-50"
+        : "border-gray-200 hover:border-gray-300 focus:border-[#143C62] focus:ring-4 focus:ring-[#143C62]/10"
     }`;
 
-  return (
-    <div className="min-h-screen bg-white text-gray-900">
-      {/* ================================================
-          EN-TÊTE
-      ================================================ */}
-      <section className="pt-32 pb-4">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-[13px] uppercase tracking-[0.2em] text-orange-600 font-medium mb-5">
-            Contact
-          </p>
-          <h1
-            className="text-[#143C62] max-w-2xl"
-            style={{
-              fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
-              fontWeight: 700,
-              lineHeight: 1.05,
-              letterSpacing: "-0.03em",
-            }}
-          >
-            Parlons de votre projet
-          </h1>
-          <p className="text-gray-500 text-lg leading-relaxed max-w-lg mt-6">
-            Décrivez-nous votre besoin technique. Nous revenons vers vous sous
-            24 heures ouvrées.
-          </p>
-        </div>
-      </section>
+  const labelClass = "block text-[13px] font-medium text-gray-700 mb-2";
 
-      {/* ================================================
-          CORPS — coordonnées + formulaire
-      ================================================ */}
-      <section className="py-20">
+  return (
+    <div className="min-h-screen bg-[#f7f8fa]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-20">
         <div
-          ref={contentRef}
-          className="max-w-6xl mx-auto px-6"
+          ref={panelRef}
+          className="overflow-hidden rounded-3xl bg-white shadow-[0_4px_40px_-12px_rgba(20,60,98,0.15)]"
           style={{
-            opacity: contentInView ? 1 : 0,
-            transform: contentInView ? "translateY(0)" : "translateY(24px)",
+            opacity: panelInView ? 1 : 0,
+            transform: panelInView ? "translateY(0)" : "translateY(28px)",
             transition: "opacity 0.7s ease, transform 0.7s ease",
           }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-            {/* ---- Coordonnées ---- */}
-            <aside className="lg:col-span-4">
-              <dl className="divide-y divide-gray-100 border-t border-gray-100">
-                {coordonnees.map((item) => (
-                  <div key={item.label} className="py-5">
-                    <dt className="text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1.5">
-                      {item.label}
-                    </dt>
-                    <dd className="text-[15px] text-gray-800">
-                      {item.href ? (
-                        <a
-                          href={item.href}
-                          className="hover:text-orange-600 transition-colors duration-200"
-                        >
-                          {item.value}
-                        </a>
-                      ) : (
-                        item.value
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+          <div className="grid grid-cols-1 lg:grid-cols-12">
 
-              {/* Liens sociaux */}
-              <div className="mt-10 flex gap-5">
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="LinkedIn"
-                  className="text-gray-400 hover:text-[#143C62] transition-colors duration-200"
+            {/* ================================================
+                PANNEAU GAUCHE — bleu Aeris
+            ================================================ */}
+            <aside className="relative lg:col-span-5 bg-[#143C62] p-8 sm:p-10 lg:p-12 overflow-hidden">
+
+              {/* Halos décoratifs discrets */}
+              <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-orange-500/10 blur-2xl" />
+              <div className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-white/5 blur-2xl" />
+
+              <div className="relative">
+                {/* Surtitre */}
+                <p className="mb-5 text-[12px] font-semibold uppercase tracking-[0.2em] text-orange-400">
+                  Contact
+                </p>
+
+                {/* Titre */}
+                <h1
+                  className="text-white"
+                  style={{
+                    fontSize: "clamp(1.9rem, 3vw, 2.6rem)",
+                    fontWeight: 700,
+                    lineHeight: 1.12,
+                    letterSpacing: "-0.02em",
+                  }}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
-                    <circle cx="4" cy="4" r="2" />
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="GitHub"
-                  className="text-gray-400 hover:text-[#143C62] transition-colors duration-200"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-                  </svg>
-                </a>
+                  Parlons de
+                  <br />
+                  <span className="text-orange-400">votre projet</span>
+                </h1>
+
+                {/* Accroche */}
+                <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/60">
+                  Décrivez-nous votre besoin technique. Notre équipe revient
+                  vers vous sous 24 heures ouvrées.
+                </p>
+
+                {/* Séparateur */}
+                <div className="my-9 h-px bg-white/10" />
+
+                {/* Coordonnées */}
+                <ul className="space-y-6">
+                  {coordonnees.map((item) => (
+                    <li key={item.label} className="flex items-start gap-4">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-orange-400">
+                        {item.icon}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="mb-1 text-[11px] uppercase tracking-[0.14em] text-white/40">
+                          {item.label}
+                        </p>
+                        {item.href ? (
+                          <a
+                            href={item.href}
+                            className="break-words text-[14.5px] text-white/90 transition-colors duration-200 hover:text-orange-400"
+                          >
+                            {item.value}
+                          </a>
+                        ) : (
+                          <p className="text-[14.5px] text-white/90">{item.value}</p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Réseaux sociaux */}
+                <div className="mt-10 flex gap-3">
+                  {reseaux.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={social.label}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white/60 transition-colors duration-300 hover:bg-orange-500 hover:text-white"
+                    >
+                      {social.icon}
+                    </a>
+                  ))}
+                </div>
               </div>
             </aside>
 
-            {/* ---- Formulaire ---- */}
-            <div className="lg:col-span-8">
+            {/* ================================================
+                PANNEAU DROIT — formulaire
+            ================================================ */}
+            <div className="p-8 sm:p-10 lg:col-span-7 lg:p-12">
+
               {status === "success" ? (
-                /* État de confirmation */
-                <div className="border-t border-gray-100 pt-12">
-                  <div className="flex items-start gap-4 max-w-md">
+                /* ---- Confirmation d'envoi ---- */
+                <div className="flex h-full min-h-[26rem] flex-col items-center justify-center text-center">
+                  <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50">
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#16a34a"
                       strokeWidth={1.5}
-                      className="w-7 h-7 shrink-0 mt-0.5"
+                      className="h-8 w-8"
                     >
                       <circle cx="12" cy="12" r="10" />
                       <path d="M8.5 12.5l2.5 2.5 4.5-5" />
                     </svg>
-                    <div>
-                      <h2 className="text-xl font-semibold text-[#143C62] mb-2">
-                        Message bien reçu
-                      </h2>
-                      <p className="text-gray-500 leading-relaxed mb-8">
-                        Merci de nous avoir écrit. Notre équipe vous répondra
-                        sous 24 heures ouvrées à l'adresse que vous avez
-                        indiquée.
-                      </p>
-                      <button
-                        onClick={() => setStatus("idle")}
-                        className="text-[15px] font-medium text-orange-600 hover:text-orange-700 transition-colors duration-200"
-                      >
-                        Écrire un autre message
-                      </button>
-                    </div>
                   </div>
+                  <h2 className="mb-3 text-2xl font-bold text-[#143C62]">
+                    Message bien reçu
+                  </h2>
+                  <p className="mb-8 max-w-sm leading-relaxed text-gray-500">
+                    Merci de nous avoir écrit. Nous vous répondrons sous
+                    24 heures ouvrées à l'adresse indiquée.
+                  </p>
+                  <button
+                    onClick={() => setStatus("idle")}
+                    className="rounded-full border border-[#143C62]/20 px-7 py-3 text-[15px] font-medium text-[#143C62] transition-colors duration-300 hover:border-transparent hover:bg-[#143C62] hover:text-white"
+                  >
+                    Écrire un autre message
+                  </button>
                 </div>
               ) : (
-                /* Formulaire */
-                <form ref={formRef} onSubmit={handleSubmit} noValidate>
+                /* ---- Formulaire ---- */
+                <form onSubmit={handleSubmit} noValidate>
+                  <h2 className="mb-1 text-xl font-bold text-[#143C62]">
+                    Envoyez-nous un message
+                  </h2>
+                  <p className="mb-8 text-sm text-gray-400">
+                    Tous les champs sont requis.
+                  </p>
+
                   {/* Nom + Email */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8">
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <div>
-                      <label
-                        htmlFor="nom"
-                        className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
-                      >
+                      <label htmlFor="nom" className={labelClass}>
                         Nom complet
                       </label>
                       <input
@@ -323,17 +357,12 @@ export default function ContactPage() {
                         className={fieldClass("nom")}
                       />
                       {errors.nom && (
-                        <p className="text-red-500 text-xs mt-2">
-                          {errors.nom}
-                        </p>
+                        <p className="mt-2 text-xs text-red-500">{errors.nom}</p>
                       )}
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
-                      >
+                      <label htmlFor="email" className={labelClass}>
                         Email
                       </label>
                       <input
@@ -347,19 +376,14 @@ export default function ContactPage() {
                         className={fieldClass("email")}
                       />
                       {errors.email && (
-                        <p className="text-red-500 text-xs mt-2">
-                          {errors.email}
-                        </p>
+                        <p className="mt-2 text-xs text-red-500">{errors.email}</p>
                       )}
                     </div>
                   </div>
 
                   {/* Sujet */}
-                  <div className="mt-8">
-                    <label
-                      htmlFor="sujet"
-                      className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
-                    >
+                  <div className="mt-5">
+                    <label htmlFor="sujet" className={labelClass}>
                       Sujet
                     </label>
                     <select
@@ -379,18 +403,13 @@ export default function ContactPage() {
                       ))}
                     </select>
                     {errors.sujet && (
-                      <p className="text-red-500 text-xs mt-2">
-                        {errors.sujet}
-                      </p>
+                      <p className="mt-2 text-xs text-red-500">{errors.sujet}</p>
                     )}
                   </div>
 
                   {/* Message */}
-                  <div className="mt-8">
-                    <label
-                      htmlFor="message"
-                      className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
-                    >
+                  <div className="mt-5">
+                    <label htmlFor="message" className={labelClass}>
                       Message
                     </label>
                     <textarea
@@ -402,28 +421,25 @@ export default function ContactPage() {
                       rows={6}
                       className={`${fieldClass("message")} resize-none leading-relaxed`}
                     />
-                    <div className="flex justify-between items-start gap-4 mt-2">
-                      <p className="text-red-500 text-xs">
-                        {errors.message ?? ""}
-                      </p>
-                      <span className="text-gray-300 text-xs shrink-0 tabular-nums">
+                    <div className="mt-2 flex items-start justify-between gap-4">
+                      <p className="text-xs text-red-500">{errors.message ?? ""}</p>
+                      <span className="shrink-0 text-xs tabular-nums text-gray-300">
                         {formData.message.length}
                       </span>
                     </div>
                   </div>
 
-                  {/* Message d'échec — formulation neutre, aucun détail technique */}
+                  {/* Échec d'envoi — formulation neutre */}
                   {status === "error" && (
-                    <div className="mt-8 border-l-2 border-orange-400 pl-4 py-1">
-                      <p className="text-[15px] text-gray-800 mb-1">
+                    <div className="mt-6 rounded-xl border border-orange-200 bg-orange-50/60 px-4 py-3.5">
+                      <p className="mb-0.5 text-[14.5px] font-medium text-gray-800">
                         L'envoi n'a pas abouti.
                       </p>
-                      <p className="text-sm text-gray-500 leading-relaxed">
-                        Vous pouvez réessayer dans un instant, ou nous écrire
-                        directement à{" "}
+                      <p className="text-[13.5px] leading-relaxed text-gray-600">
+                        Réessayez dans un instant, ou écrivez-nous directement à{" "}
                         <a
                           href={`mailto:${CONTACT_EMAIL}`}
-                          className="text-orange-600 hover:text-orange-700 underline underline-offset-2"
+                          className="font-medium text-orange-600 underline underline-offset-2 hover:text-orange-700"
                         >
                           {CONTACT_EMAIL}
                         </a>
@@ -433,19 +449,15 @@ export default function ContactPage() {
                   )}
 
                   {/* Bouton d'envoi */}
-                  <div className="mt-10 flex items-center gap-6">
+                  <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                     <button
                       type="submit"
                       disabled={status === "sending"}
-                      className="inline-flex items-center gap-2.5 bg-[#143C62] hover:bg-[#0f2d4a] disabled:bg-gray-300 text-white text-[15px] font-medium px-8 py-3.5 rounded-full transition-colors duration-300 disabled:cursor-not-allowed"
+                      className="inline-flex items-center gap-2.5 rounded-full bg-[#143C62] px-8 py-3.5 text-[15px] font-medium text-white transition-all duration-300 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/25 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none"
                     >
                       {status === "sending" ? (
                         <>
-                          <svg
-                            className="animate-spin w-4 h-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                          >
+                          <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
                             <circle
                               className="opacity-25"
                               cx="12"
@@ -460,17 +472,17 @@ export default function ContactPage() {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                             />
                           </svg>
-                          Envoi…
+                          Envoi en cours…
                         </>
                       ) : (
                         <>
-                          Envoyer
+                          Envoyer le message
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth={1.8}
-                            className="w-4 h-4"
+                            className="h-4 w-4"
                           >
                             <path d="M5 12h14M13 6l6 6-6 6" />
                           </svg>
@@ -478,7 +490,7 @@ export default function ContactPage() {
                       )}
                     </button>
 
-                    <p className="text-xs text-gray-400 leading-relaxed max-w-[16rem]">
+                    <p className="max-w-[15rem] text-xs leading-relaxed text-gray-400">
                       Vos données servent uniquement à traiter votre demande.
                     </p>
                   </div>
@@ -487,7 +499,7 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
