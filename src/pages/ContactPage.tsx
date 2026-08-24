@@ -1,82 +1,61 @@
 // ============================================================
 // pages/ContactPage.tsx
-// Page Contact avec formulaire EmailJS
+// Page Contact — formulaire relié à EmailJS
 //
-// CONFIGURATION EMAILJS :
-// 1. Créer un compte sur https://www.emailjs.com
-// 2. Créer un "Email Service" → copier le Service ID
-// 3. Créer un "Email Template" → copier le Template ID
-// 4. Account → copier la Public Key
-// 5. Créer un fichier .env à la racine du projet avec :
-//    VITE_EMAILJS_SERVICE_ID=service_xxxxxxx
-//    VITE_EMAILJS_TEMPLATE_ID=template_xxxxxxx
-//    VITE_EMAILJS_PUBLIC_KEY=xxxxxxxxxxxxxxxx
+// NOTE SUR LES CLÉS
+// La Public Key EmailJS n'est pas un secret : Vite l'inline dans le
+// bundle JS livré au navigateur, elle est donc lisible par tous quoi
+// qu'il arrive. Elle est écrite en clair ici pour éviter toute
+// dépendance aux variables de build (Docker / Dokploy), source de
+// pannes silencieuses en production.
+// La protection réelle se fait côté EmailJS :
+//   Account > Security > Allowed Origins → ajouter le domaine du site
 // ============================================================
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import { useInView } from "../hooks/useInView";
 
-// Clés EmailJS lues depuis les variables d'environnement
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+// ── Configuration EmailJS ────────────────────────────────────
+const EMAILJS_SERVICE_ID = "service_nc73soi";
+const EMAILJS_TEMPLATE_ID = "c4uuavm";
+const EMAILJS_PUBLIC_KEY = "pdvy58y_12XizQ7bM";
 
-// ============================================================
-// Données statiques
-// ============================================================
+// Adresse affichée et utilisée comme recours si l'envoi échoue
+const CONTACT_EMAIL = "aerisconsultingbf@gmail.com";
+
+// ── Sujets proposés dans le formulaire ───────────────────────
 const sujets = [
-  "Projet Robotique",
+  "Projet robotique",
   "Systèmes embarqués",
   "Automatisme industriel",
-  "Impression & Modélisation 3D",
+  "Impression & modélisation 3D",
   "Prototypage",
   "Domotique",
   "Autre demande",
 ];
 
-const contactInfos = [
+// ── Coordonnées ──────────────────────────────────────────────
+const coordonnees = [
   {
     label: "Email",
-    value: "aerisconsultingbf@gmail.com",
-    href: "mailto:aerisconsultingbf@gmail.com",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
+    value: CONTACT_EMAIL,
+    href: `mailto:${CONTACT_EMAIL}`,
   },
   {
     label: "Téléphone",
     value: "+226 67 42 83 16",
     href: "tel:+22667428316",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-        <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 17.72V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-      </svg>
-    ),
   },
   {
     label: "Adresse",
     value: "Ouagadougou, Burkina Faso",
-    href: "https://maps.google.com/?q=Ouagadougou,Burkina+Faso",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-        <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ),
+    href: null,
   },
   {
     label: "Horaires",
-    value: "Lun – Ven : 8h00 – 17h00",
+    value: "Lundi – Vendredi, 8h – 17h",
     href: null,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 6v6l4 2" />
-      </svg>
-    ),
   },
 ];
 
@@ -84,8 +63,7 @@ const contactInfos = [
 // Composant principal
 // ============================================================
 export default function ContactPage() {
-  const { ref: heroRef, inView: heroInView } = useInView(0.1);
-  const { ref: contentRef, inView: contentInView } = useInView(0.1);
+  const { ref: contentRef, inView: contentInView } = useInView(0.05);
 
   const formRef = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState({
@@ -96,6 +74,11 @@ export default function ContactPage() {
   });
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+
+  // Initialisation du SDK EmailJS au montage de la page
+  useEffect(() => {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }, []);
 
   // Mise à jour d'un champ et effacement de son erreur
   const handleChange = (
@@ -108,366 +91,381 @@ export default function ContactPage() {
     }
   };
 
-  // Validation avant envoi
+  // Validation des champs avant envoi
   const validate = () => {
-    const newErrors: Partial<typeof formData> = {};
+    const next: Partial<typeof formData> = {};
     if (!formData.nom.trim()) {
-      newErrors.nom = "Le nom est requis";
+      next.nom = "Indiquez votre nom";
     }
     if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
+      next.email = "Indiquez votre email";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Adresse email invalide";
+      next.email = "Cette adresse semble incorrecte";
     }
     if (!formData.sujet) {
-      newErrors.sujet = "Veuillez choisir un sujet";
+      next.sujet = "Choisissez un sujet";
     }
     if (!formData.message.trim()) {
-      newErrors.message = "Le message est requis";
+      next.message = "Écrivez votre message";
     } else if (formData.message.trim().length < 20) {
-      newErrors.message = "Message trop court (20 caractères minimum)";
+      next.message = "Un peu plus de détails nous aiderait (20 caractères minimum)";
     }
-    return newErrors;
+    return next;
   };
 
-  // Envoi via EmailJS
-  const handleSubmit = async (e: React.MouseEvent) => {
+  // Envoi du formulaire
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
+
     setStatus("sending");
+
     try {
-      // Les noms des champs (name="nom", name="email"...) doivent correspondre
-      // aux variables de votre template EmailJS : {{nom}}, {{email}}, {{sujet}}, {{message}}
-      await emailjs.sendForm(
+      // On envoie l'état React plutôt que le DOM du formulaire :
+      // plus fiable, notamment avec l'autofill du navigateur qui ne
+      // déclenche pas toujours onChange.
+      await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
-        formRef.current!,
-        EMAILJS_PUBLIC_KEY
+        {
+          nom: formData.nom,
+          email: formData.email,
+          sujet: formData.sujet,
+          message: formData.message,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY }
       );
+
       setStatus("success");
       setFormData({ nom: "", email: "", sujet: "", message: "" });
-    } catch {
+    } catch (err) {
+      // Détail technique réservé à la console développeur —
+      // jamais exposé au visiteur
+      console.error("[Contact] Échec de l'envoi EmailJS :", err);
       setStatus("error");
     }
   };
 
-  // Classe CSS des champs selon leur état d'erreur
-  const inputClass = (field: keyof typeof formData) =>
-    `w-full px-4 py-3 rounded-xl border text-gray-800 text-sm placeholder-gray-400 bg-white outline-none transition-all duration-200 ${
+  // Style commun des champs
+  const fieldClass = (field: keyof typeof formData) =>
+    `w-full bg-transparent border-0 border-b py-3 text-[15px] text-gray-900 placeholder-gray-400 outline-none transition-colors duration-200 ${
       errors[field]
-        ? "border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-        : "border-gray-200 focus:border-[#143C62] focus:ring-2 focus:ring-[#143C62]/10"
+        ? "border-red-400 focus:border-red-500"
+        : "border-gray-200 focus:border-[#143C62]"
     }`;
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
 
       {/* ================================================
-          HERO - Fond bleu brand + décorations géométriques
+          EN-TÊTE
       ================================================ */}
-      <section className="relative pt-32 pb-24 bg-[#143C62] overflow-hidden">
-
-        {/* Texture grille décorative */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <defs>
-              <pattern id="grid-contact" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid-contact)" />
-          </svg>
-        </div>
-
-        {/* Cercles décoratifs */}
-        <div className="absolute -top-20 -right-20 w-96 h-96 bg-orange-500/10 rounded-full pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-white/5 rounded-full pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-orange-500/5 rounded-full pointer-events-none" />
-
-        {/* Contenu */}
-        <div
-          ref={heroRef}
-          className="relative z-10 max-w-2xl mx-auto px-6 text-center"
-          style={{
-            opacity: heroInView ? 1 : 0,
-            transform: heroInView ? "translateY(0)" : "translateY(30px)",
-            transition: "opacity 0.7s ease, transform 0.7s ease",
-          }}
-        >
-           
-          <span className="text-orange-400 font-semibold text-sm uppercase tracking-widest">
-            Parlons de votre projet
-          </span>
-          <h1 className="font-bold text-5xl md:text-6xl text-white mt-3 mb-6">
+      <section className="pt-32 pb-4">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-[13px] uppercase tracking-[0.2em] text-orange-600 font-medium mb-5">
             Contact
-          </h1>
-          <p className="text-white/70 text-lg md:text-xl leading-relaxed">
-            Vous avez un projet en tête ? Une question technique ?
-            Écrivez-nous, nous vous répondrons sous 24h.
           </p>
-
-          {/* Badge réponse rapide */}
-          <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 text-green-300 text-sm font-medium px-4 py-2 rounded-full mt-6">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            Réponse garantie sous 24h
-          </div>
+          <h1
+            className="text-[#143C62] max-w-2xl"
+            style={{
+              fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
+              fontWeight: 700,
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Parlons de votre projet
+          </h1>
+          <p className="text-gray-500 text-lg leading-relaxed max-w-lg mt-6">
+            Décrivez-nous votre besoin technique. Nous revenons vers vous
+            sous 24 heures ouvrées.
+          </p>
         </div>
       </section>
 
       {/* ================================================
-          SECTION PRINCIPALE : Infos + Formulaire
+          CORPS — coordonnées + formulaire
       ================================================ */}
-      <section className="py-20 bg-white">
+      <section className="py-20">
         <div
           ref={contentRef}
-          className="max-w-7xl mx-auto px-6"
+          className="max-w-6xl mx-auto px-6"
           style={{
             opacity: contentInView ? 1 : 0,
-            transform: contentInView ? "translateY(0)" : "translateY(40px)",
-            transition: "opacity 0.8s ease, transform 0.8s ease",
+            transform: contentInView ? "translateY(0)" : "translateY(24px)",
+            transition: "opacity 0.7s ease, transform 0.7s ease",
           }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
 
-            {/* ---- Colonne gauche : coordonnées ---- */}
-            <div className="lg:col-span-2 space-y-6">
-              <div>
-                <h2 className="font-bold text-2xl text-[#143C62] mb-2">Nos coordonnées</h2>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  Notre équipe est disponible du lundi au vendredi pour répondre
-                  à toutes vos questions.
-                </p>
-              </div>
+            {/* ---- Coordonnées ---- */}
+            <aside className="lg:col-span-4">
+              <dl className="divide-y divide-gray-100 border-t border-gray-100">
+                {coordonnees.map((item) => (
+                  <div key={item.label} className="py-5">
+                    <dt className="text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1.5">
+                      {item.label}
+                    </dt>
+                    <dd className="text-[15px] text-gray-800">
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          className="hover:text-orange-600 transition-colors duration-200"
+                        >
+                          {item.value}
+                        </a>
+                      ) : (
+                        item.value
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
 
-              {/* Cartes d'information */}
-              {contactInfos.map((info) => (
-                <div
-                  key={info.label}
-                  className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:border-[#143C62]/20 hover:shadow-md transition-all duration-300 group"
+              {/* Liens sociaux */}
+              <div className="mt-10 flex gap-5">
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                  className="text-gray-400 hover:text-[#143C62] transition-colors duration-200"
                 >
-                  <div className="w-10 h-10 bg-[#143C62]/10 rounded-xl flex items-center justify-center text-[#143C62] shrink-0 group-hover:bg-[#143C62] group-hover:text-white transition-all duration-300">
-                    {info.icon}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-[#143C62] text-sm mb-0.5">{info.label}</p>
-                    {info.href ? (
-                      <a
-                        href={info.href}
-                        target={info.href.startsWith("http") ? "_blank" : undefined}
-                        rel="noreferrer"
-                        className="text-gray-500 text-sm hover:text-orange-500 transition-colors whitespace-pre-line"
-                      >
-                        {info.value}
-                      </a>
-                    ) : (
-                      <p className="text-gray-500 text-sm whitespace-pre-line">{info.value}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {/* Réseaux sociaux */}
-              <div className="pt-2">
-                <p className="text-gray-400 text-xs uppercase tracking-widest font-semibold mb-3">
-                  Suivez-nous
-                </p>
-                <div className="flex gap-3">
-                  {[
-                    {
-                      label: "LinkedIn",
-                      href: "https://www.linkedin.com/company/aeris-consulting/",
-                      icon: (
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                          <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
-                          <circle cx="4" cy="4" r="2" />
-                        </svg>
-                      ),
-                    },
-                    {
-                      label: "Facebook",
-                      href: "https://www.facebook.com/profile.php?id=100088140007030",
-                      icon: (
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                           <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                        </svg>
-                      ),
-                    },
-                  ].map((social) => (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={social.label}
-                      className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-[#143C62] text-gray-500 hover:text-white flex items-center justify-center transition-all duration-300"
-                    >
-                      {social.icon}
-                    </a>
-                  ))}
-                </div>
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                    <circle cx="4" cy="4" r="2" />
+                  </svg>
+                </a>
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="GitHub"
+                  className="text-gray-400 hover:text-[#143C62] transition-colors duration-200"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                  </svg>
+                </a>
               </div>
-            </div>
+            </aside>
 
-            {/* ---- Colonne droite : formulaire ---- */}
-            <div className="lg:col-span-3">
-              <div className="bg-gray-50 border border-gray-100 rounded-3xl p-8 md:p-10 shadow-sm">
+            {/* ---- Formulaire ---- */}
+            <div className="lg:col-span-8">
 
-                {/* Écran de succès après envoi */}
-                {status === "success" ? (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth={2} className="w-10 h-10">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <h3 className="font-bold text-2xl text-[#143C62] mb-3">Message envoyé</h3>
-                    <p className="text-gray-500 mb-8">
-                      Merci pour votre message. Nous vous répondrons dans les 24 heures.
-                    </p>
-                    <button
-                      onClick={() => setStatus("idle")}
-                      className="bg-[#143C62] hover:bg-orange-500 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300"
+              {status === "success" ? (
+                /* État de confirmation */
+                <div className="border-t border-gray-100 pt-12">
+                  <div className="flex items-start gap-4 max-w-md">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#16a34a"
+                      strokeWidth={1.5}
+                      className="w-7 h-7 shrink-0 mt-0.5"
                     >
-                      Envoyer un autre message
-                    </button>
-                  </div>
-                ) : (
-                  <form ref={formRef} noValidate>
-                    <h2 className="font-bold text-xl text-[#143C62] mb-6">
-                      Envoyez-nous un message
-                    </h2>
-
-                    {/* Nom + Email */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          Nom complet <span className="text-orange-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="nom"
-                          value={formData.nom}
-                          onChange={handleChange}
-                          placeholder="Jean Dupont"
-                          className={inputClass("nom")}
-                        />
-                        {errors.nom && (
-                          <p className="text-red-500 text-xs mt-1">{errors.nom}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          Email <span className="text-orange-500">*</span>
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="jean@exemple.fr"
-                          className={inputClass("email")}
-                        />
-                        {errors.email && (
-                          <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Sujet */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Sujet <span className="text-orange-500">*</span>
-                      </label>
-                      <select
-                        name="sujet"
-                        value={formData.sujet}
-                        onChange={handleChange}
-                        className={inputClass("sujet")}
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+                    </svg>
+                    <div>
+                      <h2 className="text-xl font-semibold text-[#143C62] mb-2">
+                        Message bien reçu
+                      </h2>
+                      <p className="text-gray-500 leading-relaxed mb-8">
+                        Merci de nous avoir écrit. Notre équipe vous répondra
+                        sous 24 heures ouvrées à l'adresse que vous avez indiquée.
+                      </p>
+                      <button
+                        onClick={() => setStatus("idle")}
+                        className="text-[15px] font-medium text-orange-600 hover:text-orange-700 transition-colors duration-200"
                       >
-                        <option value="">Sélectionnez un sujet</option>
-                        {sujets.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                      {errors.sujet && (
-                        <p className="text-red-500 text-xs mt-1">{errors.sujet}</p>
+                        Écrire un autre message
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Formulaire */
+                <form ref={formRef} onSubmit={handleSubmit} noValidate>
+
+                  {/* Nom + Email */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8">
+                    <div>
+                      <label
+                        htmlFor="nom"
+                        className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
+                      >
+                        Nom complet
+                      </label>
+                      <input
+                        id="nom"
+                        type="text"
+                        name="nom"
+                        value={formData.nom}
+                        onChange={handleChange}
+                        placeholder="Votre nom"
+                        autoComplete="name"
+                        className={fieldClass("nom")}
+                      />
+                      {errors.nom && (
+                        <p className="text-red-500 text-xs mt-2">{errors.nom}</p>
                       )}
                     </div>
 
-                    {/* Message */}
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Message <span className="text-orange-500">*</span>
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
+                      >
+                        Email
                       </label>
-                      <textarea
-                        name="message"
-                        value={formData.message}
+                      <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
-                        placeholder="Décrivez votre projet, vos contraintes techniques, votre calendrier..."
-                        rows={5}
-                        className={`${inputClass("message")} resize-none`}
+                        placeholder="vous@exemple.com"
+                        autoComplete="email"
+                        className={fieldClass("email")}
                       />
-                      <div className="flex justify-between items-center mt-1">
-                        {errors.message ? (
-                          <p className="text-red-500 text-xs">{errors.message}</p>
-                        ) : (
-                          <span />
-                        )}
-                        <span className="text-gray-300 text-xs">
-                          {formData.message.length} caractères
-                        </span>
-                      </div>
+                      {errors.email && (
+                        <p className="text-red-500 text-xs mt-2">{errors.email}</p>
+                      )}
                     </div>
+                  </div>
 
-                    {/* Erreur d'envoi EmailJS */}
-                    {status === "error" && (
-                      <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-                        Une erreur s'est produite. Vérifiez vos clés EmailJS dans le fichier .env
-                        ou contactez-nous directement par email.
-                      </div>
+                  {/* Sujet */}
+                  <div className="mt-8">
+                    <label
+                      htmlFor="sujet"
+                      className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
+                    >
+                      Sujet
+                    </label>
+                    <select
+                      id="sujet"
+                      name="sujet"
+                      value={formData.sujet}
+                      onChange={handleChange}
+                      className={`${fieldClass("sujet")} cursor-pointer ${
+                        formData.sujet ? "text-gray-900" : "text-gray-400"
+                      }`}
+                    >
+                      <option value="">Sélectionnez un sujet</option>
+                      {sujets.map((s) => (
+                        <option key={s} value={s} className="text-gray-900">
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.sujet && (
+                      <p className="text-red-500 text-xs mt-2">{errors.sujet}</p>
                     )}
+                  </div>
 
-                    {/* Bouton envoi */}
+                  {/* Message */}
+                  <div className="mt-8">
+                    <label
+                      htmlFor="message"
+                      className="block text-[11px] uppercase tracking-[0.15em] text-gray-400 mb-1"
+                    >
+                      Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      placeholder="Décrivez votre projet, vos contraintes techniques, votre calendrier…"
+                      rows={6}
+                      className={`${fieldClass("message")} resize-none leading-relaxed`}
+                    />
+                    <div className="flex justify-between items-start gap-4 mt-2">
+                      <p className="text-red-500 text-xs">{errors.message ?? ""}</p>
+                      <span className="text-gray-300 text-xs shrink-0 tabular-nums">
+                        {formData.message.length}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Message d'échec — formulation neutre, aucun détail technique */}
+                  {status === "error" && (
+                    <div className="mt-8 border-l-2 border-orange-400 pl-4 py-1">
+                      <p className="text-[15px] text-gray-800 mb-1">
+                        L'envoi n'a pas abouti.
+                      </p>
+                      <p className="text-sm text-gray-500 leading-relaxed">
+                        Vous pouvez réessayer dans un instant, ou nous écrire
+                        directement à{" "}
+                        <a
+                          href={`mailto:${CONTACT_EMAIL}`}
+                          className="text-orange-600 hover:text-orange-700 underline underline-offset-2"
+                        >
+                          {CONTACT_EMAIL}
+                        </a>
+                        .
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Bouton d'envoi */}
+                  <div className="mt-10 flex items-center gap-6">
                     <button
-                      onClick={handleSubmit}
+                      type="submit"
                       disabled={status === "sending"}
-                      className="w-full sm:w-auto flex items-center justify-center gap-3 bg-[#143C62] hover:bg-orange-500 disabled:bg-gray-300 text-white font-semibold px-10 py-3.5 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/30 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:transform-none"
+                      className="inline-flex items-center gap-2.5 bg-[#143C62] hover:bg-[#0f2d4a] disabled:bg-gray-300 text-white text-[15px] font-medium px-8 py-3.5 rounded-full transition-colors duration-300 disabled:cursor-not-allowed"
                     >
                       {status === "sending" ? (
                         <>
                           <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                            />
                           </svg>
-                          Envoi en cours...
+                          Envoi…
                         </>
                       ) : (
                         <>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-                            <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" />
+                          Envoyer
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={1.8}
+                            className="w-4 h-4"
+                          >
+                            <path d="M5 12h14M13 6l6 6-6 6" />
                           </svg>
-                          Envoyer le message
                         </>
                       )}
                     </button>
 
-                    <p className="text-gray-400 text-xs mt-4">
-                      En envoyant ce formulaire, vous acceptez que vos données soient utilisées
-                      pour traiter votre demande.
+                    <p className="text-xs text-gray-400 leading-relaxed max-w-[16rem]">
+                      Vos données servent uniquement à traiter votre demande.
                     </p>
-                  </form>
-                )}
-              </div>
+                  </div>
+                </form>
+              )}
             </div>
-
           </div>
         </div>
       </section>
-
     </div>
   );
 }
