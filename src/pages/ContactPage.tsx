@@ -18,7 +18,7 @@ import { useInView } from "../hooks/useInView";
 
 // ── Configuration EmailJS ────────────────────────────────────
 const EMAILJS_SERVICE_ID = "service_nc73soi";
-const EMAILJS_TEMPLATE_ID = "c4uuavm";
+const EMAILJS_TEMPLATE_ID = "template_rb7to6k";
 const EMAILJS_PUBLIC_KEY = "pdvy58y_12XizQ7bM";
 
 // Adresse affichée et utilisée comme recours si l'envoi échoue
@@ -73,7 +73,9 @@ export default function ContactPage() {
     message: "",
   });
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "sending" | "success" | "error"
+  >("idle");
 
   // Initialisation du SDK EmailJS au montage de la page
   useEffect(() => {
@@ -82,7 +84,9 @@ export default function ContactPage() {
 
   // Mise à jour d'un champ et effacement de son erreur
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -108,7 +112,8 @@ export default function ContactPage() {
     if (!formData.message.trim()) {
       next.message = "Écrivez votre message";
     } else if (formData.message.trim().length < 20) {
-      next.message = "Un peu plus de détails nous aiderait (20 caractères minimum)";
+      next.message =
+        "Un peu plus de détails nous aiderait (20 caractères minimum)";
     }
     return next;
   };
@@ -138,7 +143,7 @@ export default function ContactPage() {
           sujet: formData.sujet,
           message: formData.message,
         },
-        { publicKey: EMAILJS_PUBLIC_KEY }
+        { publicKey: EMAILJS_PUBLIC_KEY },
       );
 
       setStatus("success");
@@ -161,7 +166,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-
       {/* ================================================
           EN-TÊTE
       ================================================ */}
@@ -182,8 +186,8 @@ export default function ContactPage() {
             Parlons de votre projet
           </h1>
           <p className="text-gray-500 text-lg leading-relaxed max-w-lg mt-6">
-            Décrivez-nous votre besoin technique. Nous revenons vers vous
-            sous 24 heures ouvrées.
+            Décrivez-nous votre besoin technique. Nous revenons vers vous sous
+            24 heures ouvrées.
           </p>
         </div>
       </section>
@@ -202,7 +206,6 @@ export default function ContactPage() {
           }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-
             {/* ---- Coordonnées ---- */}
             <aside className="lg:col-span-4">
               <dl className="divide-y divide-gray-100 border-t border-gray-100">
@@ -236,7 +239,11 @@ export default function ContactPage() {
                   aria-label="LinkedIn"
                   className="text-gray-400 hover:text-[#143C62] transition-colors duration-200"
                 >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-5 h-5"
+                  >
                     <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
                     <circle cx="4" cy="4" r="2" />
                   </svg>
@@ -248,7 +255,11 @@ export default function ContactPage() {
                   aria-label="GitHub"
                   className="text-gray-400 hover:text-[#143C62] transition-colors duration-200"
                 >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-5 h-5"
+                  >
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                   </svg>
                 </a>
@@ -257,7 +268,6 @@ export default function ContactPage() {
 
             {/* ---- Formulaire ---- */}
             <div className="lg:col-span-8">
-
               {status === "success" ? (
                 /* État de confirmation */
                 <div className="border-t border-gray-100 pt-12">
@@ -278,7 +288,8 @@ export default function ContactPage() {
                       </h2>
                       <p className="text-gray-500 leading-relaxed mb-8">
                         Merci de nous avoir écrit. Notre équipe vous répondra
-                        sous 24 heures ouvrées à l'adresse que vous avez indiquée.
+                        sous 24 heures ouvrées à l'adresse que vous avez
+                        indiquée.
                       </p>
                       <button
                         onClick={() => setStatus("idle")}
@@ -292,7 +303,6 @@ export default function ContactPage() {
               ) : (
                 /* Formulaire */
                 <form ref={formRef} onSubmit={handleSubmit} noValidate>
-
                   {/* Nom + Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8">
                     <div>
@@ -313,7 +323,9 @@ export default function ContactPage() {
                         className={fieldClass("nom")}
                       />
                       {errors.nom && (
-                        <p className="text-red-500 text-xs mt-2">{errors.nom}</p>
+                        <p className="text-red-500 text-xs mt-2">
+                          {errors.nom}
+                        </p>
                       )}
                     </div>
 
@@ -335,7 +347,9 @@ export default function ContactPage() {
                         className={fieldClass("email")}
                       />
                       {errors.email && (
-                        <p className="text-red-500 text-xs mt-2">{errors.email}</p>
+                        <p className="text-red-500 text-xs mt-2">
+                          {errors.email}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -365,7 +379,9 @@ export default function ContactPage() {
                       ))}
                     </select>
                     {errors.sujet && (
-                      <p className="text-red-500 text-xs mt-2">{errors.sujet}</p>
+                      <p className="text-red-500 text-xs mt-2">
+                        {errors.sujet}
+                      </p>
                     )}
                   </div>
 
@@ -387,7 +403,9 @@ export default function ContactPage() {
                       className={`${fieldClass("message")} resize-none leading-relaxed`}
                     />
                     <div className="flex justify-between items-start gap-4 mt-2">
-                      <p className="text-red-500 text-xs">{errors.message ?? ""}</p>
+                      <p className="text-red-500 text-xs">
+                        {errors.message ?? ""}
+                      </p>
                       <span className="text-gray-300 text-xs shrink-0 tabular-nums">
                         {formData.message.length}
                       </span>
@@ -423,7 +441,11 @@ export default function ContactPage() {
                     >
                       {status === "sending" ? (
                         <>
-                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                          <svg
+                            className="animate-spin w-4 h-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
                             <circle
                               className="opacity-25"
                               cx="12"
